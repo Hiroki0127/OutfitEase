@@ -45,25 +45,22 @@ struct OutfitListView: View {
                                             image
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
-                                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
                                                 .blur(radius: 15)
                                                 .clipped()
                                         } placeholder: {
                                             RoundedRectangle(cornerRadius: 12)
                                                 .fill(Color.blue.opacity(0.1))
-                                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
                                         }
                                     } else {
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(Color.blue.opacity(0.1))
-                                            .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
                                     }
                                     
                                     // Overlay for better text readability
                                     Rectangle()
                                         .fill(Color.black.opacity(0.4))
                                         .cornerRadius(12)
-                                        .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
                                     
                                     // Content
                                     VStack(spacing: 16) {
@@ -93,7 +90,8 @@ struct OutfitListView: View {
                                         }
                                     }
                                 }
-                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .clipped()
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.blue.opacity(0.3), lineWidth: 1)
@@ -103,6 +101,7 @@ struct OutfitListView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                             .frame(height: geometry.size.height * 0.5)
+                            .clipped()
                             
                             // Liked Outfits Section (50% of screen)
                             Button(action: {
@@ -117,25 +116,22 @@ struct OutfitListView: View {
                                             image
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
-                                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
                                                 .blur(radius: 15)
                                                 .clipped()
                                         } placeholder: {
                                             RoundedRectangle(cornerRadius: 12)
                                                 .fill(Color.red.opacity(0.1))
-                                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
                                         }
                                     } else {
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(Color.red.opacity(0.1))
-                                            .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
                                     }
                                     
                                     // Overlay for better text readability
                                     Rectangle()
                                         .fill(Color.black.opacity(0.4))
                                         .cornerRadius(12)
-                                        .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
                                     
                                     // Content
                                     VStack(spacing: 16) {
@@ -165,7 +161,8 @@ struct OutfitListView: View {
                                         }
                                     }
                                 }
-                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .clipped()
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.red.opacity(0.3), lineWidth: 1)
@@ -175,6 +172,7 @@ struct OutfitListView: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                             .frame(height: geometry.size.height * 0.5)
+                            .clipped()
                         }
                         .padding(.horizontal)
                     }
