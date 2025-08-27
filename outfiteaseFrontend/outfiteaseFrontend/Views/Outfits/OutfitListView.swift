@@ -91,11 +91,11 @@ struct OutfitListView: View {
                                     }
                                 }
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .clipped()
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.blue.opacity(0.3), lineWidth: 1)
                                 )
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 8)
                             }
@@ -162,11 +162,11 @@ struct OutfitListView: View {
                                     }
                                 }
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .clipped()
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.red.opacity(0.3), lineWidth: 1)
                                 )
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 8)
                             }
