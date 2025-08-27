@@ -30,147 +30,154 @@ struct OutfitListView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     // Split view with My Outfits and Liked Outfits
-                    VStack(spacing: 0) {
-                        // My Outfits Section (50% of screen)
-                        Button(action: {
-                            showMyOutfitsList = true
-                        }) {
-                            ZStack {
-                                // Background image (blurred)
-                                if let firstOutfit = filteredOutfits.first,
-                                   let imageURL = firstOutfit.imageURL,
-                                   !imageURL.isEmpty {
-                                    AsyncImage(url: URL(string: imageURL)) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                            .blur(radius: 15)
-                                            .clipped()
-                                    } placeholder: {
+                    GeometryReader { geometry in
+                        VStack(spacing: 0) {
+                            // My Outfits Section (50% of screen)
+                            Button(action: {
+                                showMyOutfitsList = true
+                            }) {
+                                ZStack {
+                                    // Background image (blurred) - completely constrained to frame
+                                    if let firstOutfit = filteredOutfits.first,
+                                       let imageURL = firstOutfit.imageURL,
+                                       !imageURL.isEmpty {
+                                        AsyncImage(url: URL(string: imageURL)) { image in
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                                .blur(radius: 15)
+                                                .clipped()
+                                        } placeholder: {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.blue.opacity(0.1))
+                                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                        }
+                                    } else {
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(Color.blue.opacity(0.1))
+                                            .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
                                     }
-                                } else {
+                                    
+                                    // Overlay for better text readability
+                                    Rectangle()
+                                        .fill(Color.black.opacity(0.4))
+                                        .cornerRadius(12)
+                                        .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                    
+                                    // Content
+                                    VStack(spacing: 16) {
+                                        Image(systemName: "person.2.fill")
+                                            .font(.system(size: 40))
+                                            .foregroundColor(.white)
+                                        
+                                        Text("My Outfits")
+                                            .font(.title2)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                        
+                                        Text("\(filteredOutfits.count) outfit\(filteredOutfits.count == 1 ? "" : "s")")
+                                            .font(.subheadline)
+                                            .foregroundColor(.white.opacity(0.9))
+                                        
+                                        if filteredOutfits.isEmpty {
+                                            Text("Create your first outfit!")
+                                                .font(.caption)
+                                                .foregroundColor(.white.opacity(0.8))
+                                                .multilineTextAlignment(.center)
+                                        } else {
+                                            Text("Your created outfits")
+                                                .font(.caption)
+                                                .foregroundColor(.white.opacity(0.8))
+                                                .multilineTextAlignment(.center)
+                                        }
+                                    }
+                                }
+                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.blue.opacity(0.1))
-                                }
-                                
-                                // Overlay for better text readability
-                                Rectangle()
-                                    .fill(Color.black.opacity(0.4))
-                                    .cornerRadius(12)
-                                
-                                // Content
-                                VStack(spacing: 16) {
-                                    Image(systemName: "person.2.fill")
-                                        .font(.system(size: 40))
-                                        .foregroundColor(.white)
-                                    
-                                    Text("My Outfits")
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                    
-                                    Text("\(filteredOutfits.count) outfit\(filteredOutfits.count == 1 ? "" : "s")")
-                                        .font(.subheadline)
-                                        .foregroundColor(.white.opacity(0.9))
-                                    
-                                    if filteredOutfits.isEmpty {
-                                        Text("Create your first outfit!")
-                                            .font(.caption)
-                                            .foregroundColor(.white.opacity(0.8))
-                                            .multilineTextAlignment(.center)
-                                    } else {
-                                        Text("Your created outfits")
-                                            .font(.caption)
-                                            .foregroundColor(.white.opacity(0.8))
-                                            .multilineTextAlignment(.center)
-                                    }
-                                }
+                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                )
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 8)
                             }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.blue.opacity(0.3), lineWidth: 1)
-                            )
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 8)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        
-                        // Liked Outfits Section (50% of screen)
-                        Button(action: {
-                            showLikedOutfitsList = true
-                        }) {
-                            ZStack {
-                                // Background image (blurred)
-                                if let firstLikedOutfit = likedOutfitsViewModel.likedOutfits.first,
-                                   let imageURL = firstLikedOutfit.imageURL,
-                                   !imageURL.isEmpty {
-                                    AsyncImage(url: URL(string: imageURL)) { image in
-                                        image
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                            .blur(radius: 15)
-                                            .clipped()
-                                    } placeholder: {
+                            .buttonStyle(PlainButtonStyle())
+                            .frame(height: geometry.size.height * 0.5)
+                            
+                            // Liked Outfits Section (50% of screen)
+                            Button(action: {
+                                showLikedOutfitsList = true
+                            }) {
+                                ZStack {
+                                    // Background image (blurred) - completely constrained to frame
+                                    if let firstLikedOutfit = likedOutfitsViewModel.likedOutfits.first,
+                                       let imageURL = firstLikedOutfit.imageURL,
+                                       !imageURL.isEmpty {
+                                        AsyncImage(url: URL(string: imageURL)) { image in
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                                .blur(radius: 15)
+                                                .clipped()
+                                        } placeholder: {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.red.opacity(0.1))
+                                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                        }
+                                    } else {
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(Color.red.opacity(0.1))
+                                            .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
                                     }
-                                } else {
+                                    
+                                    // Overlay for better text readability
+                                    Rectangle()
+                                        .fill(Color.black.opacity(0.4))
+                                        .cornerRadius(12)
+                                        .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                    
+                                    // Content
+                                    VStack(spacing: 16) {
+                                        Image(systemName: "bookmark.fill")
+                                            .font(.system(size: 40))
+                                            .foregroundColor(.white)
+                                        
+                                        Text("Saved Outfits")
+                                            .font(.title2)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                        
+                                        Text("\(likedOutfitsViewModel.likedOutfits.count) outfit\(likedOutfitsViewModel.likedOutfits.count == 1 ? "" : "s")")
+                                            .font(.subheadline)
+                                            .foregroundColor(.white.opacity(0.9))
+                                        
+                                        if likedOutfitsViewModel.likedOutfits.isEmpty {
+                                            Text("Liked outfits")
+                                                .font(.caption)
+                                                .foregroundColor(.white.opacity(0.8))
+                                                .multilineTextAlignment(.center)
+                                        } else {
+                                            Text("Saved outfits")
+                                                .font(.caption)
+                                                .foregroundColor(.white.opacity(0.8))
+                                                .multilineTextAlignment(.center)
+                                        }
+                                    }
+                                }
+                                .frame(width: geometry.size.width - 16, height: (geometry.size.height * 0.5) - 16)
+                                .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.red.opacity(0.1))
-                                }
-                                
-                                // Overlay for better text readability
-                                Rectangle()
-                                    .fill(Color.black.opacity(0.4))
-                                    .cornerRadius(12)
-                                
-                                // Content
-                                VStack(spacing: 16) {
-                                    Image(systemName: "bookmark.fill")
-                                        .font(.system(size: 40))
-                                        .foregroundColor(.white)
-                                    
-                                    Text("Saved Outfits")
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                    
-                                    Text("\(likedOutfitsViewModel.likedOutfits.count) outfit\(likedOutfitsViewModel.likedOutfits.count == 1 ? "" : "s")")
-                                        .font(.subheadline)
-                                        .foregroundColor(.white.opacity(0.9))
-                                    
-                                    if likedOutfitsViewModel.likedOutfits.isEmpty {
-                                        Text("Liked outfits")
-                                            .font(.caption)
-                                            .foregroundColor(.white.opacity(0.8))
-                                            .multilineTextAlignment(.center)
-                                    } else {
-                                        Text("Saved outfits")
-                                            .font(.caption)
-                                            .foregroundColor(.white.opacity(0.8))
-                                            .multilineTextAlignment(.center)
-                                    }
-                                }
+                                        .stroke(Color.red.opacity(0.3), lineWidth: 1)
+                                )
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 8)
                             }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.red.opacity(0.3), lineWidth: 1)
-                            )
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 8)
+                            .buttonStyle(PlainButtonStyle())
+                            .frame(height: geometry.size.height * 0.5)
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
-                    .frame(maxHeight: .infinity)
                 }
             }
             .navigationTitle("Outfits")
