@@ -4,7 +4,7 @@ struct LikedOutfitsListView: View {
     @ObservedObject var likedOutfitsViewModel: LikedOutfitsViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
-    @StateObject private var outfitViewModel = OutfitViewModel()
+    @StateObject private var outfitViewModel =  OutfitViewModel()
     @State private var selectedOutfits: Set<String> = []
     @State private var showBulkSelection = false
     @State private var showUnsaveAlert = false

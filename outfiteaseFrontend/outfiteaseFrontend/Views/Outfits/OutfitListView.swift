@@ -37,55 +37,34 @@ struct OutfitListView: View {
                                 showMyOutfitsList = true
                             }) {
                                 ZStack {
-                                    // Background image (blurred) - completely constrained to frame
-                                    if let firstOutfit = filteredOutfits.first,
-                                       let imageURL = firstOutfit.imageURL,
-                                       !imageURL.isEmpty {
-                                        AsyncImage(url: URL(string: imageURL)) { image in
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                                .blur(radius: 15)
-                                                .clipped()
-                                        } placeholder: {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(Color.blue.opacity(0.1))
-                                        }
-                                    } else {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.blue.opacity(0.1))
-                                    }
-                                    
-                                    // Overlay for better text readability
-                                    Rectangle()
-                                        .fill(Color.black.opacity(0.4))
-                                        .cornerRadius(12)
+                                    // Plain colored background
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.brown.opacity(0.2))
                                     
                                     // Content
                                     VStack(spacing: 16) {
                                         Image(systemName: "person.2.fill")
                                             .font(.system(size: 40))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.brown)
                                         
                                         Text("My Outfits")
                                             .font(.title2)
                                             .fontWeight(.semibold)
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.primary)
                                         
                                         Text("\(filteredOutfits.count) outfit\(filteredOutfits.count == 1 ? "" : "s")")
                                             .font(.subheadline)
-                                            .foregroundColor(.white.opacity(0.9))
+                                            .foregroundColor(.secondary)
                                         
                                         if filteredOutfits.isEmpty {
                                             Text("Create your first outfit!")
                                                 .font(.caption)
-                                                .foregroundColor(.white.opacity(0.8))
+                                                .foregroundColor(.secondary)
                                                 .multilineTextAlignment(.center)
                                         } else {
                                             Text("Your created outfits")
                                                 .font(.caption)
-                                                .foregroundColor(.white.opacity(0.8))
+                                                .foregroundColor(.secondary)
                                                 .multilineTextAlignment(.center)
                                         }
                                     }
@@ -93,7 +72,7 @@ struct OutfitListView: View {
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.brown.opacity(0.3), lineWidth: 1)
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .padding(.horizontal, 8)
@@ -103,60 +82,40 @@ struct OutfitListView: View {
                             .frame(height: geometry.size.height * 0.5)
                             .clipped()
                             
+                            
                             // Liked Outfits Section (50% of screen)
                             Button(action: {
                                 showLikedOutfitsList = true
                             }) {
                                 ZStack {
-                                    // Background image (blurred) - completely constrained to frame
-                                    if let firstLikedOutfit = likedOutfitsViewModel.likedOutfits.first,
-                                       let imageURL = firstLikedOutfit.imageURL,
-                                       !imageURL.isEmpty {
-                                        AsyncImage(url: URL(string: imageURL)) { image in
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                                .blur(radius: 15)
-                                                .clipped()
-                                        } placeholder: {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(Color.red.opacity(0.1))
-                                        }
-                                    } else {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.red.opacity(0.1))
-                                    }
-                                    
-                                    // Overlay for better text readability
-                                    Rectangle()
-                                        .fill(Color.black.opacity(0.4))
-                                        .cornerRadius(12)
+                                    // Plain colored background
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.gray.opacity(0.2))
                                     
                                     // Content
                                     VStack(spacing: 16) {
                                         Image(systemName: "bookmark.fill")
                                             .font(.system(size: 40))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.gray)
                                         
                                         Text("Saved Outfits")
                                             .font(.title2)
                                             .fontWeight(.semibold)
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.primary)
                                         
                                         Text("\(likedOutfitsViewModel.likedOutfits.count) outfit\(likedOutfitsViewModel.likedOutfits.count == 1 ? "" : "s")")
                                             .font(.subheadline)
-                                            .foregroundColor(.white.opacity(0.9))
+                                            .foregroundColor(.secondary)
                                         
                                         if likedOutfitsViewModel.likedOutfits.isEmpty {
                                             Text("Liked outfits")
                                                 .font(.caption)
-                                                .foregroundColor(.white.opacity(0.8))
+                                                .foregroundColor(.secondary)
                                                 .multilineTextAlignment(.center)
                                         } else {
                                             Text("Saved outfits")
                                                 .font(.caption)
-                                                .foregroundColor(.white.opacity(0.8))
+                                                .foregroundColor(.secondary)
                                                 .multilineTextAlignment(.center)
                                         }
                                     }
@@ -164,7 +123,7 @@ struct OutfitListView: View {
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.red.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .padding(.horizontal, 8)
