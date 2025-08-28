@@ -14,12 +14,13 @@ class LikedOutfitsViewModel: ObservableObject {
         
         do {
             print("🔄 Loading saved outfits...")
+            let previousCount = likedOutfits.count
             likedOutfits = try await outfitService.getSavedOutfits()
-            print("✅ Loaded \(likedOutfits.count) saved outfits")
+            print("✅ Loaded \(likedOutfits.count) saved outfits (was \(previousCount))")
             
             // Debug: Print outfit details
             for (index, outfit) in likedOutfits.enumerated() {
-                print("📋 Saved outfit \(index + 1): \(outfit.name ?? "Unknown") by \(outfit.username)")
+                print("📋 Saved outfit \(index + 1): \(outfit.name ?? "Unknown") by \(outfit.username) (ID: \(outfit.id))")
             }
         } catch {
             errorMessage = "Failed to load saved outfits: \(error.localizedDescription)"

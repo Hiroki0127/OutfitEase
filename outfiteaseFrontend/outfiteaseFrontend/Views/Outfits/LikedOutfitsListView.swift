@@ -234,18 +234,23 @@ struct LikedOutfitsListView: View {
         do {
             // Use bulk unsave for better performance
             let outfitIds = Array(selectedOutfits)
+            print("🗑️ Attempting to bulk unsave \(outfitIds.count) outfits: \(outfitIds)")
             try await OutfitService.shared.bulkUnsaveOutfits(outfitIds: outfitIds)
-            print("✅ Bulk unsaved \(outfitIds.count) outfits")
+            print("✅ Bulk unsaved \(outfitIds.count) outfits successfully")
         } catch {
             print("❌ Error bulk unsaving outfits: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
         }
         
         // Refresh the list
+        print("🔄 Refreshing liked outfits list...")
         await likedOutfitsViewModel.loadLikedOutfits()
+        print("✅ Refreshed liked outfits list")
         
         // Reset selection
         selectedOutfits.removeAll()
         showBulkSelection = false
+        print("🔄 Reset selection state")
     }
 }
 

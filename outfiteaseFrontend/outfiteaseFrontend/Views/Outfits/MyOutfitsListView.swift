@@ -114,7 +114,16 @@ struct MyOutfitsListView: View {
             }
             .sheet(isPresented: $showOutfitDetail) {
                 if let outfit = selectedOutfit {
-                    OutfitDetailView(outfit: outfit, outfitViewModel: outfitViewModel)
+                    OutfitDetailView(
+                        outfit: outfit, 
+                        outfitViewModel: outfitViewModel,
+                        onOutfitDeleted: {
+                            // Refresh the outfits list after deletion
+                            Task {
+                                await outfitViewModel.loadOutfits()
+                            }
+                        }
+                    )
                 }
             }
             .sheet(isPresented: $showCreateOutfit) {

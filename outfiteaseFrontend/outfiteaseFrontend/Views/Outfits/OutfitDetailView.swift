@@ -9,6 +9,7 @@ struct OutfitDetailView: View {
     @State private var showCreatePostSheet = false
     @State private var showPlanningSheet = false
     @State private var detailedOutfit: Outfit?
+    var onOutfitDeleted: (() -> Void)?
     
     var body: some View {
         ScrollView {
@@ -65,6 +66,13 @@ struct OutfitDetailView: View {
                             showEditSheet = true
                         }
                         .foregroundColor(.blue)
+                        
+                        Button(action: {
+                            showDeleteAlert = true
+                        }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                        }
                     }
                     
                     if let description = currentOutfit.description {
@@ -181,6 +189,8 @@ struct OutfitDetailView: View {
             await outfitViewModel.deleteOutfit(id: outfitToDelete.id)
             if outfitViewModel.errorMessage == nil {
                 print("✅ Outfit deleted successfully")
+                // Notify parent view that outfit was deleted
+                onOutfitDeleted?()
                 dismiss()
             } else {
                 print("❌ Failed to delete outfit: \(outfitViewModel.errorMessage ?? "Unknown error")")

@@ -154,9 +154,34 @@ exports.updateOutfit = async (
 };
 
 exports.deleteOutfit = async (id, userId) => {
-  await db.query(`DELETE FROM outfit_items WHERE outfit_id = $1`, [id]);
-  const result = await db.query(`DELETE FROM outfits WHERE id = $1 AND user_id = $2`, [id, userId]);
-  return result;
+  try {
+    console.log(`🗑️ Deleting outfit ${id} for user ${userId}`);
+    
+    // Delete from saved_outfits first (no CASCADE)
+    await db.query(`DELETE FROM saved_outfits WHERE outfit_id = $1`, [id]);
+    console.log(`✅ Deleted from saved_outfits`);
+    
+    // Delete from outfit_planning (no CASCADE)
+    await db.query(`DELETE FROM outfit_planning WHERE outfit_id = $1`, [id]);
+    console.log(`✅ Deleted from outfit_planning`);
+    
+    // Delete from outfit_items (has CASCADE but being explicit)
+    await db.query(`DELETE FROM outfit_items WHERE outfit_id = $1`, [id]);
+    console.log(`✅ Deleted from outfit_items`);
+    
+    // Delete from posts (has CASCADE but being explicit)
+    await db.query(`DELETE FROM posts WHERE outfit_id = $1`, [id]);
+    console.log(`✅ Deleted from posts`);
+    
+    // Finally delete the outfit
+    const result = await db.query(`DELETE FROM outfits WHERE id = $1 AND user_id = $2`, [id, userId]);
+    console.log(`✅ Deleted outfit, rows affected: ${result.rowCount}`);
+    
+    return result;
+  } catch (err) {
+    console.error(`❌ Error deleting outfit ${id}:`, err);
+    throw err;
+  }
 };
 
 // ✅ Bulk delete multiple outfits
@@ -171,17 +196,29 @@ exports.bulkDeleteOutfits = async (outfitIds, userId) => {
     // Delete outfits one by one to avoid parameter type issues
     for (const outfitId of outfitIds) {
       try {
-        // First delete outfit_items for this outfit
+        console.log(`🗑️ Bulk deleting outfit ${outfitId} for user ${userId}`);
+        
+        // Delete from saved_outfits first (no CASCADE)
+        await db.query(`DELETE FROM saved_outfits WHERE outfit_id = $1`, [outfitId]);
+        
+        // Delete from outfit_planning (no CASCADE)
+        await db.query(`DELETE FROM outfit_planning WHERE outfit_id = $1`, [outfitId]);
+        
+        // Delete from outfit_items (has CASCADE but being explicit)
         await db.query(`DELETE FROM outfit_items WHERE outfit_id = $1`, [outfitId]);
         
-        // Then delete the outfit
+        // Delete from posts (has CASCADE but being explicit)
+        await db.query(`DELETE FROM posts WHERE outfit_id = $1`, [outfitId]);
+        
+        // Finally delete the outfit
         const result = await db.query(`DELETE FROM outfits WHERE id = $1 AND user_id = $2`, [outfitId, userId]);
         
         if (result.rowCount > 0) {
           deletedCount++;
+          console.log(`✅ Successfully deleted outfit ${outfitId}`);
         }
       } catch (err) {
-        console.error(`Error deleting outfit ${outfitId}:`, err);
+        console.error(`❌ Error deleting outfit ${outfitId}:`, err);
         // Continue with other outfits even if one fails
       }
     }
