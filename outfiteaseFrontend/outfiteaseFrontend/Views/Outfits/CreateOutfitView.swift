@@ -189,6 +189,10 @@ struct CreateOutfitView: View {
     
     private func createOutfit() {
         Task {
+            print("🔄 Creating outfit...")
+            print("📋 Selected clothing items: \(selectedClothingItems)")
+            print("📋 Selected clothing items count: \(selectedClothingItems.count)")
+            
             var imageURL: String? = nil
             
             // Upload image if selected
@@ -215,12 +219,17 @@ struct CreateOutfitView: View {
                 clothingItemIds: selectedClothingItems.isEmpty ? nil : Array(selectedClothingItems)
             )
             
+            print("📤 Sending request with clothingItemIds: \(request.clothingItemIds ?? [])")
+            
             await outfitViewModel.addOutfit(request)
             
             if outfitViewModel.errorMessage == nil {
+                print("✅ Outfit created successfully")
                 // Notify parent that outfit was created
                 onOutfitCreated?()
                 dismiss()
+            } else {
+                print("❌ Failed to create outfit: \(outfitViewModel.errorMessage ?? "Unknown error")")
             }
         }
     }
@@ -261,9 +270,12 @@ struct ClothingItemsSelectionView: View {
                     ) {
                         if selectedClothingItems.contains(item.id) {
                             selectedClothingItems.remove(item.id)
+                            print("❌ Removed item: \(item.name) (ID: \(item.id))")
                         } else {
                             selectedClothingItems.insert(item.id)
+                            print("✅ Added item: \(item.name) (ID: \(item.id))")
                         }
+                        print("📋 Current selection count: \(selectedClothingItems.count)")
                     }
                 }
                 

@@ -160,6 +160,7 @@ struct OutfitDetailView: View {
                 EditOutfitView(outfit: detailedOutfit ?? outfit, outfitViewModel: outfitViewModel)
             }
         }
+
         .sheet(isPresented: $showCreatePostSheet) {
             CreatePostFromOutfitView(outfit: detailedOutfit ?? outfit)
         }
@@ -351,6 +352,8 @@ struct EditOutfitView: View {
         // Pre-select existing clothing items if the outfit has them
         let existingClothingItemIds = outfit.items?.compactMap { $0.id } ?? []
         _selectedClothingItems = State(initialValue: Set(existingClothingItemIds))
+        
+
     }
     
     var body: some View {
@@ -605,6 +608,10 @@ struct EditOutfitView: View {
     
     private func saveChanges() {
         Task {
+            print("🔄 Updating outfit...")
+            print("📋 Selected clothing items: \(selectedClothingItems)")
+            print("📋 Selected clothing items count: \(selectedClothingItems.count)")
+            
             var imageURL: String? = outfit.imageURL
             
             // Upload new image if selected
@@ -634,6 +641,7 @@ struct EditOutfitView: View {
                 clothingItemIds: selectedClothingItems.isEmpty ? nil : Array(selectedClothingItems)
             )
             
+            print("📤 Sending request with clothingItemIds: \(request.clothingItemIds ?? [])")
             print("📝 Saving outfit changes...")
             await outfitViewModel.updateOutfit(id: outfit.id, request)
             
