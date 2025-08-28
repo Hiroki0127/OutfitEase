@@ -130,18 +130,22 @@ struct PostCardView: View {
                         .foregroundColor(.green)
                 }
                 
-                // Save Outfit Button (only show if post has an outfit)
+                // Save/Unsave Outfit Button (only show if post has an outfit)
                 if post.outfit != nil {
                     Button(action: {
                         Task {
-                            await saveOutfit()
+                            if isOutfitSaved {
+                                await unsaveOutfit()
+                            } else {
+                                await saveOutfit()
+                            }
                         }
                     }) {
                         Image(systemName: isOutfitSaved ? "bookmark.fill" : (isSavingOutfit ? "bookmark" : "bookmark"))
                             .foregroundColor(isOutfitSaved ? .blue : (isSavingOutfit ? .gray : .gray))
                             .font(.title3)
                     }
-                    .disabled(isSavingOutfit || isOutfitSaved)
+                    .disabled(isSavingOutfit)
                 }
                 
                 Spacer()
@@ -244,6 +248,29 @@ struct PostCardView: View {
             
         } catch {
             print("❌ Error saving outfit: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            // You could show an error alert here if needed
+        }
+        
+        isSavingOutfit = false
+    }
+    
+    private func unsaveOutfit() async {
+        guard let outfit = post.outfit else { return }
+        guard !isSavingOutfit else { return }
+        
+        isSavingOutfit = true
+        
+        do {
+            // Unsave the outfit using the saved outfits functionality
+            try await OutfitService.shared.unsaveOutfit(outfitId: outfit.id.uuidString)
+            print("✅ Outfit unsaved successfully: \(outfit.name ?? "Unknown")")
+            
+            // Update UI state
+            isOutfitSaved = false
+            
+        } catch {
+            print("❌ Error unsaving outfit: \(error)")
             print("❌ Error details: \(error.localizedDescription)")
             // You could show an error alert here if needed
         }
