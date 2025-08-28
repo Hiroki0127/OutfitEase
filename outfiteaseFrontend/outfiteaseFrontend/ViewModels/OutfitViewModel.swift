@@ -25,6 +25,21 @@ class OutfitViewModel: ObservableObject {
         isLoading = false
     }
     
+    func loadOutfit(id: UUID) async -> Outfit? {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let outfit = try await outfitService.getOutfit(id: id)
+            isLoading = false
+            return outfit
+        } catch {
+            errorMessage = error.localizedDescription
+            isLoading = false
+            return nil
+        }
+    }
+    
     func addOutfit(_ outfit: CreateOutfitRequest) async {
         isLoading = true
         errorMessage = nil

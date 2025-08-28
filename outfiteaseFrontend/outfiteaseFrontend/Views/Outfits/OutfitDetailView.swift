@@ -8,12 +8,16 @@ struct OutfitDetailView: View {
     @State private var showDeleteAlert = false
     @State private var showCreatePostSheet = false
     @State private var showPlanningSheet = false
+    @State private var detailedOutfit: Outfit?
     
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                // Use detailedOutfit if available, otherwise use the passed outfit
+                let currentOutfit = detailedOutfit ?? outfit
+                
                 // Outfit Image
-                if let imageURL = outfit.imageURL, !imageURL.isEmpty {
+                if let imageURL = currentOutfit.imageURL, !imageURL.isEmpty {
                     // Display actual image from URL
                     AsyncImage(url: URL(string: imageURL)) { image in
                         image
@@ -51,7 +55,7 @@ struct OutfitDetailView: View {
                 // Details Section
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
-                        Text(outfit.name ?? "Untitled Outfit")
+                        Text(currentOutfit.name ?? "Untitled Outfit")
                             .font(.title2)
                             .fontWeight(.bold)
                         
@@ -63,34 +67,34 @@ struct OutfitDetailView: View {
                         .foregroundColor(.blue)
                     }
                     
-                    if let description = outfit.description {
+                    if let description = currentOutfit.description {
                         Text(description)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
                     
                     // Tags
-                    if let style = outfit.style, !style.isEmpty {
+                    if let style = currentOutfit.style, !style.isEmpty {
                         TagSection(title: "Style", tags: style)
                     }
                     
-                    if let color = outfit.color, !color.isEmpty {
+                    if let color = currentOutfit.color, !color.isEmpty {
                         TagSection(title: "Colors", tags: color)
                     }
                     
-                    if let brand = outfit.brand, !brand.isEmpty {
+                    if let brand = currentOutfit.brand, !brand.isEmpty {
                         TagSection(title: "Brands", tags: brand)
                     }
                     
-                    if let season = outfit.season, !season.isEmpty {
+                    if let season = currentOutfit.season, !season.isEmpty {
                         TagSection(title: "Seasons", tags: season)
                     }
                     
-                    if let occasion = outfit.occasion, !occasion.isEmpty {
+                    if let occasion = currentOutfit.occasion, !occasion.isEmpty {
                         TagSection(title: "Occasions", tags: occasion)
                     }
                     
-                    if let totalPrice = outfit.totalPrice {
+                    if let totalPrice = currentOutfit.totalPrice {
                         HStack {
                             Text("Total Price:")
                                 .font(.subheadline)
@@ -103,7 +107,7 @@ struct OutfitDetailView: View {
                     }
                     
                     // Clothing Pieces Section
-                    if let items = outfit.items, !items.isEmpty {
+                    if let items = currentOutfit.items, !items.isEmpty {
                         ClothingPiecesSection(clothingItems: items)
                     }
                     
@@ -145,14 +149,14 @@ struct OutfitDetailView: View {
         }
         .sheet(isPresented: $showEditSheet) {
             NavigationView {
-                EditOutfitView(outfit: outfit, outfitViewModel: outfitViewModel)
+                EditOutfitView(outfit: detailedOutfit ?? outfit, outfitViewModel: outfitViewModel)
             }
         }
         .sheet(isPresented: $showCreatePostSheet) {
-            CreatePostFromOutfitView(outfit: outfit)
+            CreatePostFromOutfitView(outfit: detailedOutfit ?? outfit)
         }
         .sheet(isPresented: $showPlanningSheet) {
-            PlanOutfitView(outfit: outfit)
+            PlanOutfitView(outfit: detailedOutfit ?? outfit)
         }
         .alert("Delete Outfit", isPresented: $showDeleteAlert) {
             Button("Cancel", role: .cancel) { }
@@ -162,12 +166,19 @@ struct OutfitDetailView: View {
         } message: {
             Text("Are you sure you want to delete this outfit? This action cannot be undone.")
         }
+        .task {
+            // Load detailed outfit data including clothing items
+            if let loadedOutfit = await outfitViewModel.loadOutfit(id: outfit.id) {
+                detailedOutfit = loadedOutfit
+            }
+        }
     }
     
     private func deleteOutfit() {
         Task {
-            print("🗑️ Deleting outfit: \(outfit.id)")
-            await outfitViewModel.deleteOutfit(id: outfit.id)
+            let outfitToDelete = detailedOutfit ?? outfit
+            print("🗑️ Deleting outfit: \(outfitToDelete.id)")
+            await outfitViewModel.deleteOutfit(id: outfitToDelete.id)
             if outfitViewModel.errorMessage == nil {
                 print("✅ Outfit deleted successfully")
                 dismiss()
@@ -292,6 +303,7 @@ struct EditOutfitView: View {
     let outfit: Outfit
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var outfitViewModel: OutfitViewModel
+    @StateObject private var clothingViewModel = ClothingViewModel()
     
     @State private var name: String
     @State private var description: String
@@ -306,6 +318,7 @@ struct EditOutfitView: View {
     @State private var isUploadingImage = false
     @State private var brand = ""
     @State private var brands: [String] = []
+    @State private var selectedClothingItems: Set<String> = []
     
     private let styles = ["Casual", "Formal", "Business", "Sport", "Streetwear", "Vintage", "Minimalist"]
     private let defaultBrands = ["Nike", "Adidas", "Zara", "H&M", "Uniqlo", "Gap", "Levi's", "Other"]
@@ -324,6 +337,10 @@ struct EditOutfitView: View {
         _selectedOccasions = State(initialValue: Set(outfit.occasion ?? []))
         _totalPrice = State(initialValue: outfit.totalPrice != nil ? String(format: "%.2f", outfit.totalPrice!) : "")
         _brands = State(initialValue: outfit.brand ?? [])
+        
+        // Pre-select existing clothing items if the outfit has them
+        let existingClothingItemIds = outfit.items?.compactMap { $0.id } ?? []
+        _selectedClothingItems = State(initialValue: Set(existingClothingItemIds))
     }
     
     var body: some View {
@@ -390,6 +407,13 @@ struct EditOutfitView: View {
                         .lineLimit(3...6)
                     TextField("Total Price", text: $totalPrice)
                         .keyboardType(.decimalPad)
+                }
+                
+                Section("Clothing Items Used") {
+                    ClothingItemsSelectionView(
+                        clothingViewModel: clothingViewModel,
+                        selectedClothingItems: $selectedClothingItems
+                    )
                 }
                 
                 Section("Style") {
@@ -559,6 +583,10 @@ struct EditOutfitView: View {
             .sheet(isPresented: $showImagePicker) {
                 ImagePicker(selectedImage: $selectedImage)
             }
+            .task {
+                // Load clothing items when view appears
+                await clothingViewModel.loadClothingItems()
+            }
     }
     
     private var isFormValid: Bool {
@@ -592,7 +620,8 @@ struct EditOutfitView: View {
                 color: selectedColors.isEmpty ? nil : Array(selectedColors),
                 brand: selectedBrands.isEmpty ? nil : Array(selectedBrands),
                 season: selectedSeasons.isEmpty ? nil : Array(selectedSeasons),
-                occasion: selectedOccasions.isEmpty ? nil : Array(selectedOccasions)
+                occasion: selectedOccasions.isEmpty ? nil : Array(selectedOccasions),
+                clothingItemIds: selectedClothingItems.isEmpty ? nil : Array(selectedClothingItems)
             )
             
             print("📝 Saving outfit changes...")

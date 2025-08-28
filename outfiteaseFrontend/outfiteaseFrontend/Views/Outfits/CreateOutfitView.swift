@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CreateOutfitView: View {
     @ObservedObject var outfitViewModel: OutfitViewModel
+    @StateObject private var clothingViewModel = ClothingViewModel()
     @Environment(\.dismiss) private var dismiss
     
     // Optional parameter for when coming from clothing detail view
@@ -21,6 +22,7 @@ struct CreateOutfitView: View {
     @State private var selectedOccasions: Set<String> = []
     @State private var brands: [String] = []
     @State private var selectedImage: UIImage?
+    @State private var selectedClothingItems: Set<String> = []
     
     private let styles = ["Casual", "Formal", "Business", "Sport", "Streetwear", "Vintage", "Minimalist"]
     private let seasons = ["Spring", "Summer", "Fall", "Winter", "All Season"]
@@ -39,6 +41,13 @@ struct CreateOutfitView: View {
                         .lineLimit(3...6)
                     TextField("Total Price", text: $totalPrice)
                         .keyboardType(.decimalPad)
+                }
+                
+                Section("Clothing Items Used") {
+                    ClothingItemsSelectionView(
+                        clothingViewModel: clothingViewModel,
+                        selectedClothingItems: $selectedClothingItems
+                    )
                 }
                 
                 Section("Style") {
@@ -162,6 +171,15 @@ struct CreateOutfitView: View {
             } message: {
                 Text(outfitViewModel.errorMessage ?? "")
             }
+            .task {
+                // Load clothing items when view appears
+                await clothingViewModel.loadClothingItems()
+                
+                // If we have a pre-selected clothing item, add it to the selection
+                if let selectedClothingItemId = selectedClothingItemId {
+                    selectedClothingItems.insert(selectedClothingItemId)
+                }
+            }
         }
     }
     
@@ -194,7 +212,7 @@ struct CreateOutfitView: View {
                 brand: brands.isEmpty ? nil : brands,
                 season: selectedSeasons.isEmpty ? nil : Array(selectedSeasons),
                 occasion: selectedOccasions.isEmpty ? nil : Array(selectedOccasions),
-                clothingItemIds: selectedClothingItemId != nil ? [selectedClothingItemId!] : nil
+                clothingItemIds: selectedClothingItems.isEmpty ? nil : Array(selectedClothingItems)
             )
             
             await outfitViewModel.addOutfit(request)
@@ -212,4 +230,126 @@ struct CreateOutfitView: View {
 
 #Preview {
     CreateOutfitView(outfitViewModel: OutfitViewModel(), selectedClothingItemId: nil, onOutfitCreated: nil)
+}
+
+struct ClothingItemsSelectionView: View {
+    @ObservedObject var clothingViewModel: ClothingViewModel
+    @Binding var selectedClothingItems: Set<String>
+    
+    var body: some View {
+        if clothingViewModel.isLoading {
+            HStack {
+                ProgressView()
+                    .scaleEffect(0.8)
+                Text("Loading your clothing items...")
+                    .foregroundColor(.secondary)
+            }
+        } else if clothingViewModel.clothingItems.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("No clothing items found")
+                    .foregroundColor(.secondary)
+                Text("Add some clothing items to your wardrobe first to create outfits.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        } else {
+            VStack(spacing: 8) {
+                ForEach(clothingViewModel.clothingItems, id: \.id) { item in
+                    ClothingItemSelectionRow(
+                        item: item,
+                        isSelected: selectedClothingItems.contains(item.id)
+                    ) {
+                        if selectedClothingItems.contains(item.id) {
+                            selectedClothingItems.remove(item.id)
+                        } else {
+                            selectedClothingItems.insert(item.id)
+                        }
+                    }
+                }
+                
+                if !selectedClothingItems.isEmpty {
+                    HStack {
+                        Text("\(selectedClothingItems.count) item\(selectedClothingItems.count == 1 ? "" : "s") selected")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Button("Clear Selection") {
+                            selectedClothingItems.removeAll()
+                        }
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                    }
+                    .padding(.top, 8)
+                }
+            }
+        }
+    }
+}
+
+struct ClothingItemSelectionRow: View {
+    let item: ClothingItem
+    let isSelected: Bool
+    let onTap: () -> Void
+    
+    var body: some View {
+        HStack {
+            // Clothing item image
+            if let imageURL = item.imageUrl, !imageURL.isEmpty {
+                AsyncImage(url: URL(string: imageURL)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .clipped()
+                        .cornerRadius(8)
+                } placeholder: {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 50, height: 50)
+                        .overlay(
+                            Image(systemName: "tshirt")
+                                .foregroundColor(.gray)
+                        )
+                }
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        Image(systemName: "tshirt")
+                            .foregroundColor(.gray)
+                    )
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(item.name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                
+                if let type = item.type, !type.isEmpty {
+                    Text(type)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                if let brand = item.brand, !brand.isEmpty {
+                    Text(brand)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            // Selection indicator
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(isSelected ? .blue : .gray)
+                .font(.title2)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onTap()
+        }
+    }
 }

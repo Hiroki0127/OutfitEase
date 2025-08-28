@@ -140,6 +140,7 @@ struct UpdateOutfitRequest: Codable {
     let brand: [String]?
     let season: [String]?
     let occasion: [String]?
+    let clothingItemIds: [String]?
 }
 
 // ✅ Bulk delete outfit request
