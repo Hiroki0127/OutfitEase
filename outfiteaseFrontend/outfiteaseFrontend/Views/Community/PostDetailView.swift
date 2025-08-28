@@ -120,6 +120,12 @@ struct PostDetailView: View {
                                 if let totalPrice = outfit.totalPrice {
                                     TagSection(title: "Price", tags: ["$\(String(format: "%.2f", totalPrice))"])
                                 }
+                                
+                                // Clothing Pieces Section
+                                if let items = outfit.items, !items.isEmpty {
+                                    ClothingPiecesSection(clothingItems: items)
+                                        .padding(.horizontal)
+                                }
                             }
                             .padding(.horizontal)
                         }
@@ -310,6 +316,90 @@ struct PostDetailView: View {
         }
         
         return items
+    }
+}
+
+struct ClothingPiecesSection: View {
+    let clothingItems: [ClothingItem]
+    @StateObject private var clothingViewModel = ClothingViewModel()
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Clothing Pieces Used")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(.secondary)
+            
+            VStack(spacing: 8) {
+                ForEach(clothingItems, id: \.id) { item in
+                    NavigationLink(destination: ClothingDetailView(
+                        clothingItem: item,
+                        clothingViewModel: clothingViewModel,
+                        outfitViewModel: OutfitViewModel()
+                    )) {
+                        HStack {
+                            // Clothing item image
+                            if let imageURL = item.imageUrl, !imageURL.isEmpty {
+                                AsyncImage(url: URL(string: imageURL)) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 50, height: 50)
+                                        .clipped()
+                                        .cornerRadius(8)
+                                } placeholder: {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.gray.opacity(0.3))
+                                        .frame(width: 50, height: 50)
+                                        .overlay(
+                                            Image(systemName: "tshirt")
+                                                .foregroundColor(.gray)
+                                        )
+                                }
+                            } else {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.gray.opacity(0.3))
+                                    .frame(width: 50, height: 50)
+                                    .overlay(
+                                        Image(systemName: "tshirt")
+                                            .foregroundColor(.gray)
+                                    )
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(item.name)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.primary)
+                                
+                                if let type = item.type, !type.isEmpty {
+                                    Text(type)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                if let brand = item.brand, !brand.isEmpty {
+                                    Text(brand)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+        }
     }
 }
 

@@ -109,13 +109,32 @@ struct OutfitSelectionCard: View {
         Button(action: onTap) {
             HStack {
                 // Outfit Image
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 60, height: 60)
-                    .overlay(
-                        Image(systemName: "person.2.fill")
-                            .foregroundColor(.gray)
-                    )
+                if let imageURL = outfit.imageURL, !imageURL.isEmpty {
+                    AsyncImage(url: URL(string: imageURL)) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 60, height: 60)
+                            .clipped()
+                    } placeholder: {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(width: 60, height: 60)
+                            .overlay(
+                                Image(systemName: "person.2.fill")
+                                    .foregroundColor(.gray)
+                            )
+                    }
+                    .cornerRadius(8)
+                } else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 60, height: 60)
+                        .overlay(
+                            Image(systemName: "person.2.fill")
+                                .foregroundColor(.gray)
+                        )
+                }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(outfit.name ?? "Untitled Outfit")
@@ -176,19 +195,44 @@ struct PostPreviewCard: View {
             }
             
             // Outfit Image
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.gray.opacity(0.3))
-                .frame(height: 200)
-                .overlay(
-                    VStack {
-                        Image(systemName: "person.2.fill")
-                            .font(.system(size: 30))
-                            .foregroundColor(.gray)
-                        Text("Outfit Preview")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                )
+            if let imageURL = outfit.imageURL, !imageURL.isEmpty {
+                AsyncImage(url: URL(string: imageURL)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 200)
+                        .clipped()
+                } placeholder: {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(height: 200)
+                        .overlay(
+                            VStack {
+                                Image(systemName: "person.2.fill")
+                                    .font(.system(size: 30))
+                                    .foregroundColor(.gray)
+                                Text("Outfit Preview")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                        )
+                }
+                .cornerRadius(8)
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(height: 200)
+                    .overlay(
+                        VStack {
+                            Image(systemName: "person.2.fill")
+                                .font(.system(size: 30))
+                                .foregroundColor(.gray)
+                            Text("Outfit Preview")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                    )
+            }
         }
         .padding()
         .background(Color(.systemGray6))

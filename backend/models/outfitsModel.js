@@ -30,7 +30,25 @@ exports.getAllOutfitsForUser = async (userId) => {
     `SELECT * FROM outfits WHERE user_id = $1 ORDER BY created_at DESC`,
     [userId]
   );
-  return result.rows;
+  
+  // For each outfit, get its clothing items
+  const outfitsWithItems = await Promise.all(
+    result.rows.map(async (outfit) => {
+      const itemsRes = await db.query(
+        `SELECT c.* FROM outfit_items oi
+         JOIN clothing_items c ON c.id = oi.clothing_item_id
+         WHERE oi.outfit_id = $1`,
+        [outfit.id]
+      );
+      
+      return {
+        ...outfit,
+        items: itemsRes.rows
+      };
+    })
+  );
+  
+  return outfitsWithItems;
 };
 
 exports.getOutfitById = async (id, userId) => {

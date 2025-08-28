@@ -13,6 +13,7 @@ struct Outfit: Codable, Identifiable {
     let occasion: [String]?
     let imageURL: String?
     let createdAt: String
+    let items: [ClothingItem]?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -27,10 +28,11 @@ struct Outfit: Codable, Identifiable {
         case occasion
         case imageURL = "image_url"
         case createdAt = "created_at"
+        case items
     }
     
     // Regular initializer for creating instances
-    init(id: UUID, userId: UUID, name: String?, description: String?, totalPrice: Double?, style: [String]?, color: [String]?, brand: [String]?, season: [String]?, occasion: [String]?, imageURL: String?, createdAt: String) {
+    init(id: UUID, userId: UUID, name: String?, description: String?, totalPrice: Double?, style: [String]?, color: [String]?, brand: [String]?, season: [String]?, occasion: [String]?, imageURL: String?, createdAt: String, items: [ClothingItem]? = nil) {
         self.id = id
         self.userId = userId
         self.name = name
@@ -43,6 +45,7 @@ struct Outfit: Codable, Identifiable {
         self.occasion = occasion
         self.imageURL = imageURL
         self.createdAt = createdAt
+        self.items = items
     }
     
     init(from decoder: Decoder) throws {
@@ -68,5 +71,8 @@ struct Outfit: Codable, Identifiable {
         } else {
             totalPrice = nil
         }
+        
+        // Decode clothing items
+        items = try container.decodeIfPresent([ClothingItem].self, forKey: .items)
     }
 }

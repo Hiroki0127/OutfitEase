@@ -2,6 +2,7 @@ import SwiftUI
 
 struct FeedView: View {
     @StateObject private var postViewModel = PostViewModel()
+    @State private var showCreatePost = false
     
     var body: some View {
         NavigationView {
@@ -24,7 +25,7 @@ struct FeedView: View {
                             .foregroundColor(.secondary)
                         
                         Button("Create Post") {
-                            // TODO: Navigate to create post
+                            showCreatePost = true
                         }
                         .padding()
                         .background(Color.blue)
@@ -49,7 +50,7 @@ struct FeedView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        // TODO: Navigate to create post
+                        showCreatePost = true
                     }) {
                         Image(systemName: "plus")
                     }
@@ -57,6 +58,15 @@ struct FeedView: View {
             }
             .refreshable {
                 await postViewModel.loadPosts()
+            }
+            .sheet(isPresented: $showCreatePost) {
+                CreatePostView()
+                    .onDisappear {
+                        // Refresh posts when the create post view is dismissed
+                        Task {
+                            await postViewModel.loadPosts()
+                        }
+                    }
             }
         }
         .task {

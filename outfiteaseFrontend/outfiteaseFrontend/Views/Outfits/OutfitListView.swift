@@ -61,11 +61,6 @@ struct OutfitListView: View {
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
                                                 .multilineTextAlignment(.center)
-                                        } else {
-                                            Text("Your created outfits")
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                                .multilineTextAlignment(.center)
                                         }
                                     }
                                 }
@@ -109,11 +104,6 @@ struct OutfitListView: View {
                                         
                                         if likedOutfitsViewModel.likedOutfits.isEmpty {
                                             Text("Liked outfits")
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                                .multilineTextAlignment(.center)
-                                        } else {
-                                            Text("Saved outfits")
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
                                                 .multilineTextAlignment(.center)
