@@ -10,7 +10,7 @@ struct PostDetailView: View {
     @State private var isLiking = false
     @State private var showShareSheet = false
     @State private var isSavingOutfit = false
-    @State private var showSaveSuccess = false
+
     @State private var isOutfitSaved = false
     @State private var hasCheckedSavedStatus = false
     
@@ -208,11 +208,7 @@ struct PostDetailView: View {
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(activityItems: createShareItems())
             }
-            .alert("Outfit Saved!", isPresented: $showSaveSuccess) {
-                Button("OK") { }
-            } message: {
-                Text("The outfit has been saved to your saved outfits.")
-            }
+            
             .task {
                 await commentViewModel.loadComments(postId: post.id)
                 await checkIfOutfitIsSaved()
@@ -257,8 +253,7 @@ struct PostDetailView: View {
             try await OutfitService.shared.saveOutfit(outfitId: outfit.id.uuidString)
             print("✅ Outfit saved successfully: \(outfit.name ?? "Unknown")")
             
-            // Show success feedback
-            showSaveSuccess = true
+            // Update UI state
             isOutfitSaved = true
             
         } catch {
