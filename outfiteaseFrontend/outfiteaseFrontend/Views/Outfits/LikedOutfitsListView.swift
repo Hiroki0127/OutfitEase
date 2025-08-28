@@ -28,11 +28,6 @@ struct LikedOutfitsListView: View {
             VStack {
                 // Header indicator
                 HStack {
-                    Image(systemName: "bookmark.fill")
-                        .foregroundColor(.red)
-                    Text("Saved Outfits")
-                        .font(.headline)
-                        .foregroundColor(.red)
                     Spacer()
                     Text("\(likedOutfitsViewModel.likedOutfits.count) saved")
                         .font(.caption)

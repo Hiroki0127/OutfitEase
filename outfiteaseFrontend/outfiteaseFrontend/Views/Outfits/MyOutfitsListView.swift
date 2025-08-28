@@ -26,11 +26,7 @@ struct MyOutfitsListView: View {
             VStack {
                 // Header indicator
                 HStack {
-                    Image(systemName: "person.2.fill")
-                        .foregroundColor(.blue)
-                    Text("Your Created Outfits")
-                        .font(.headline)
-                        .foregroundColor(.blue)
+         
                     Spacer()
                     Text("\(outfitViewModel.outfits.count) total")
                         .font(.caption)
