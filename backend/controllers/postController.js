@@ -79,7 +79,8 @@ exports.getAllPosts = async (req, res) => {
           season: post.outfit_season,
           occasion: post.outfit_occasion,
           image_url: post.image_url,
-          created_at: post.outfit_created_at
+          created_at: post.outfit_created_at,
+          items: post.outfit_items || [] // Include clothing items
         };
       } else {
         transformedPost.outfit = null;

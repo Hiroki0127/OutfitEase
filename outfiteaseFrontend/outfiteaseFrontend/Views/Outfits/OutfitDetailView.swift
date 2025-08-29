@@ -120,24 +120,28 @@ struct OutfitDetailView: View {
                     }
                     
                     // Actions
-                    VStack(spacing: 12) {
+                    HStack(spacing: 12) {
                         Button("Plan This Outfit") {
                             showPlanningSheet = true
                         }
                         .frame(maxWidth: .infinity)
-                        .padding()
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
                         .background(Color.blue)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(8)
+                        .font(.subheadline)
                         
                         Button("Share to Community") {
                             showCreatePostSheet = true
                         }
                         .frame(maxWidth: .infinity)
-                        .padding()
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
                         .background(Color.green)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(8)
+                        .font(.subheadline)
                     }
                 }
                 .padding()

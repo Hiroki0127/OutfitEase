@@ -51,7 +51,41 @@ async function getAllPosts(userId = null) {
     ) user_likes ON p.id = user_likes.post_id
     ORDER BY p.created_at DESC
   `, [userId]);
-  return result.rows;
+  
+  // For each post, get the clothing items if it has an outfit
+  const postsWithItems = await Promise.all(
+    result.rows.map(async (post) => {
+      if (post.outfit_id) {
+        const itemsRes = await db.query(
+          `SELECT c.* FROM outfit_items oi
+           JOIN clothing_items c ON c.id = oi.clothing_item_id
+           WHERE oi.outfit_id = $1`,
+          [post.outfit_id]
+        );
+        
+        // Format clothing items to match iOS expectations
+        const formattedItems = itemsRes.rows.map(item => ({
+          id: item.id.toString(), // Convert UUID to string
+          user_id: item.user_id,
+          name: item.name,
+          type: item.type,
+          color: item.color,
+          style: item.style,
+          brand: item.brand,
+          price: item.price ? parseFloat(item.price) : null, // Convert string to number
+          season: item.season,
+          occasion: item.occasion,
+          image_url: item.image_url,
+          created_at: item.created_at
+        }));
+        
+        return { ...post, outfit_items: formattedItems };
+      }
+      return post;
+    })
+  );
+  
+  return postsWithItems;
 }
 
 async function getPostById(id, userId = null) {
@@ -95,7 +129,38 @@ async function getPostById(id, userId = null) {
     [id, userId]
   );
   if (result.rows.length === 0) return null;
-  return result.rows[0];
+  
+  const post = result.rows[0];
+  
+  // Get clothing items if the post has an outfit
+  if (post.outfit_id) {
+    const itemsRes = await db.query(
+      `SELECT c.* FROM outfit_items oi
+       JOIN clothing_items c ON c.id = oi.clothing_item_id
+       WHERE oi.outfit_id = $1`,
+      [post.outfit_id]
+    );
+    
+    // Format clothing items to match iOS expectations
+    const formattedItems = itemsRes.rows.map(item => ({
+      id: item.id.toString(), // Convert UUID to string
+      user_id: item.user_id,
+      name: item.name,
+      type: item.type,
+      color: item.color,
+      style: item.style,
+      brand: item.brand,
+      price: item.price ? parseFloat(item.price) : null, // Convert string to number
+      season: item.season,
+      occasion: item.occasion,
+      image_url: item.image_url,
+      created_at: item.created_at
+    }));
+    
+    return { ...post, outfit_items: formattedItems };
+  }
+  
+  return post;
 };
 
 

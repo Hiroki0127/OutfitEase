@@ -97,14 +97,16 @@ struct ClothingDetailView: View {
                     }
                     
                     // Actions
-                    VStack(spacing: 12) {
+                    HStack(spacing: 12) {
                         NavigationLink(destination: CreateOutfitView(outfitViewModel: outfitViewModel, selectedClothingItemId: clothingItem.id, onOutfitCreated: nil)) {
                             Text("Add to Outfit")
                                 .frame(maxWidth: .infinity)
-                                .padding()
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 16)
                                 .background(Color.blue)
                                 .foregroundColor(.white)
-                                .cornerRadius(10)
+                                .cornerRadius(8)
+                                .font(.subheadline)
                         }
                         .buttonStyle(PlainButtonStyle())
                         
@@ -112,10 +114,12 @@ struct ClothingDetailView: View {
                             shareClothingItem()
                         }
                         .frame(maxWidth: .infinity)
-                        .padding()
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
                         .background(Color.green)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(8)
+                        .font(.subheadline)
                     }
                 }
                 .padding()
