@@ -41,9 +41,25 @@ exports.getAllOutfitsForUser = async (userId) => {
         [outfit.id]
       );
       
+      // Format clothing items to match iOS expectations
+      const formattedItems = itemsRes.rows.map(item => ({
+        id: item.id.toString(), // Convert UUID to string
+        user_id: item.user_id,
+        name: item.name,
+        type: item.type,
+        color: item.color,
+        style: item.style,
+        brand: item.brand,
+        price: item.price ? parseFloat(item.price) : null, // Convert string to number
+        season: item.season,
+        occasion: item.occasion,
+        image_url: item.image_url,
+        created_at: item.created_at
+      }));
+      
       return {
         ...outfit,
-        items: itemsRes.rows
+        items: formattedItems
       };
     })
   );
@@ -66,9 +82,25 @@ exports.getOutfitById = async (id, userId) => {
     [id]
   );
 
+  // Format clothing items to match iOS expectations
+  const formattedItems = itemsRes.rows.map(item => ({
+    id: item.id.toString(), // Convert UUID to string
+    user_id: item.user_id,
+    name: item.name,
+    type: item.type,
+    color: item.color,
+    style: item.style,
+    brand: item.brand,
+    price: item.price ? parseFloat(item.price) : null, // Convert string to number
+    season: item.season,
+    occasion: item.occasion,
+    image_url: item.image_url,
+    created_at: item.created_at
+  }));
+
   return {
     ...outfitRes.rows[0],
-    items: itemsRes.rows
+    items: formattedItems
   };
 };
 
@@ -144,7 +176,35 @@ exports.updateOutfit = async (
     }
 
     await client.query('COMMIT');
-    return result.rows[0];
+    
+    // Return the complete outfit with clothing items
+    const itemsRes = await client.query(
+      `SELECT c.* FROM outfit_items oi
+       JOIN clothing_items c ON c.id = oi.clothing_item_id
+       WHERE oi.outfit_id = $1`,
+      [outfitId]
+    );
+
+    // Format clothing items to match iOS expectations
+    const formattedItems = itemsRes.rows.map(item => ({
+      id: item.id.toString(), // Convert UUID to string
+      user_id: item.user_id,
+      name: item.name,
+      type: item.type,
+      color: item.color,
+      style: item.style,
+      brand: item.brand,
+      price: item.price ? parseFloat(item.price) : null, // Convert string to number
+      season: item.season,
+      occasion: item.occasion,
+      image_url: item.image_url,
+      created_at: item.created_at
+    }));
+
+    return {
+      ...result.rows[0],
+      items: formattedItems
+    };
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;

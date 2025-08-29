@@ -160,6 +160,18 @@ struct OutfitDetailView: View {
                 EditOutfitView(outfit: detailedOutfit ?? outfit, outfitViewModel: outfitViewModel)
             }
         }
+        .onChange(of: showEditSheet) { isPresented in
+            if !isPresented {
+                // Refresh detailed outfit data when edit sheet is dismissed
+                Task {
+                    if let refreshedOutfit = await outfitViewModel.loadOutfit(id: outfit.id) {
+                        detailedOutfit = refreshedOutfit
+                        print("🔄 Refreshed outfit data after edit")
+                        print("📋 Outfit now has \(refreshedOutfit.items?.count ?? 0) clothing items")
+                    }
+                }
+            }
+        }
 
         .sheet(isPresented: $showCreatePostSheet) {
             CreatePostFromOutfitView(outfit: detailedOutfit ?? outfit)
