@@ -1,8 +1,11 @@
 import Foundation
 
 struct Constants {
-    static let baseURL = "http://127.0.0.1:3000"
+    // MARK: - API Base URL (Render Production)
+    // Update this URL with your actual Render service URL after deployment
+    static let baseURL = "https://outfitease-backend.onrender.com"
     
+    // MARK: - API Endpoints
     struct API {
         static let auth = "/auth"
         static let clothes = "/clothes"
@@ -19,18 +22,21 @@ struct Constants {
         static let weather = "/weather"
     }
     
+    // MARK: - UserDefaults Keys
     struct UserDefaults {
         static let authToken = "authToken"
         static let isLoggedIn = "isLoggedIn"
         static let currentUser = "currentUser"
     }
     
+    // MARK: - Weather Configuration
     struct Weather {
         static let defaultCity = "New York"
         static let temperatureUnit = "°C"
         static let windSpeedUnit = "m/s"
     }
     
+    // MARK: - Outfit Generation Configuration
     struct OutfitGeneration {
         static let maxGeneratedOutfits = 10
         static let defaultBudget = 100.0

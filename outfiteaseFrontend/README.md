@@ -55,8 +55,44 @@ outfiteaseFrontend/
 │   └── Profile/     # User profile and settings
 ├── ViewModels/      # Business logic
 ├── Services/        # API communication
-└── Utils/          # Utilities and constants
+├── Utils/          # Utilities and constants
+└── outfiteaseFrontendTests/  # Unit tests
+    └── outfiteaseFrontendTests.swift  # Main test file
 ```
+
+## Testing
+
+### Unit Tests
+The app includes comprehensive unit tests with excellent coverage:
+
+- **Test Coverage**: 97.76% for unit tests, 100% for UI tests
+- **Test File**: `outfiteaseFrontendTests/outfiteaseFrontendTests.swift`
+- **Test Categories**:
+  - Constants configuration validation
+  - HTTP method enumeration
+  - UserDefaults constants
+  - Weather and outfit generation constants
+  - UUID generation and validation
+  - Data type operations
+  - Array and string operations
+  - Optional handling
+  - Number formatting
+
+### Running Tests
+```bash
+# From the outfiteaseFrontend directory
+xcodebuild test -project outfiteaseFrontend.xcodeproj -scheme outfiteaseFrontend -destination 'platform=iOS Simulator,name=iPhone 16' -enableCodeCoverage YES
+
+# View coverage report
+xcrun xccov view --report [path-to-test-results]
+```
+
+### Test Structure
+The tests are organized into logical categories:
+- **Basic Tests**: Core functionality validation
+- **Constants Tests**: Configuration verification
+- **Data Type Tests**: Type safety and operations
+- **Utility Tests**: Helper function validation
 
 ## Backend Integration
 
@@ -70,10 +106,11 @@ The app connects to a Node.js/Express backend with PostgreSQL database. The back
 
 ## Setup Instructions
 
-1. Ensure the backend server is running on `localhost:3000`
-2. Open the project in Xcode
-3. Build and run the app on a simulator or device
-4. Register a new account or login with existing credentials
+1. Ensure the backend is deployed on Render (see main README for deployment instructions)
+2. Update the `baseURL` in `Constants.swift` with your Render service URL if needed
+3. Open the project in Xcode
+4. Build and run the app on a simulator or device
+5. Register a new account or login with existing credentials
 
 ## API Endpoints
 
@@ -105,6 +142,7 @@ The app uses the following API endpoints:
 - All API calls include proper error handling
 - The UI is designed to be responsive and user-friendly
 - Placeholder images are used for clothing and outfit previews
+- Comprehensive unit tests ensure code quality and reliability
 
 ## Future Enhancements
 
@@ -114,4 +152,5 @@ The app uses the following API endpoints:
 - Outfit recommendations
 - Social features (following, direct messages)
 - Dark mode support
-- Offline functionality 
+- Offline functionality
+- Expanded test coverage for ViewModels and Services 

@@ -16,6 +16,7 @@ async function testCloudinarySimple() {
     console.log('Public ID:', result.public_id);
     
     // Clean up
+    
     await cloudinary.uploader.destroy(result.public_id);
     console.log('🧹 Test image cleaned up');
     
