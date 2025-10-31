@@ -2,8 +2,7 @@ import Foundation
 
 struct Constants {
     // MARK: - API Base URL (Render Production)
-    // Update this URL with your actual Render service URL after deployment
-    static let baseURL = "https://outfitease-backend.onrender.com"
+    static let baseURL = "https://outfitease.onrender.com"
     
     // MARK: - API Endpoints
     struct API {
