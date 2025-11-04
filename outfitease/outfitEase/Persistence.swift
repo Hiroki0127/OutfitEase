@@ -1,6 +1,6 @@
 //
 //  Persistence.swift
-//  outfitEase
+//  OutfitEase
 //
 //  Created by Hiroki Mukai on 2025-10-31.
 //
@@ -32,7 +32,7 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "outfitEase")
+        container = NSPersistentContainer(name: "OutfitEase")
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }

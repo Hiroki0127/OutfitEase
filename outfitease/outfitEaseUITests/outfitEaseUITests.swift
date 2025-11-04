@@ -1,13 +1,13 @@
 //
-//  outfitEaseUITests.swift
-//  outfitEaseUITests
+//  OutfitEaseUITests.swift
+//  OutfitEaseUITests
 //
 //  Created by Hiroki Mukai on 2025-10-31.
 //
 
 import XCTest
 
-final class outfitEaseUITests: XCTestCase {
+final class OutfitEaseUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

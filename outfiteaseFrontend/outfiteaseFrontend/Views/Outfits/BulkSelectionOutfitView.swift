@@ -32,8 +32,6 @@ struct BulkSelectionOutfitView: View {
                 } message: {
                     Text("Are you sure you want to delete \(selectedOutfits.count) selected outfit\(selectedOutfits.count == 1 ? "" : "s")? This action cannot be undone.")
                 }
-         ht 
-        t
         }
     }
     

@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  outfitEase
+//  OutfitEase
 //
 //  Created by Hiroki Mukai on 2025-10-31.
 //

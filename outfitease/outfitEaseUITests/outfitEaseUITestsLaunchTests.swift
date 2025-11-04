@@ -1,13 +1,13 @@
 //
-//  outfitEaseUITestsLaunchTests.swift
-//  outfitEaseUITests
+//  OutfitEaseUITestsLaunchTests.swift
+//  OutfitEaseUITests
 //
 //  Created by Hiroki Mukai on 2025-10-31.
 //
 
 import XCTest
 
-final class outfitEaseUITestsLaunchTests: XCTestCase {
+final class OutfitEaseUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

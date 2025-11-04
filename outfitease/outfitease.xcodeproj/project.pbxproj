@@ -7,62 +7,62 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		4594B4E62EB55F29006FD07D /* PBXContainerItemProxy */ = {
+		4594B5B72EB56C47006FD07D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 4594B4CB2EB55F28006FD07D /* Project object */;
+			containerPortal = 4594B59C2EB56C44006FD07D /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 4594B4D22EB55F28006FD07D;
-			remoteInfo = outfitEase;
+			remoteGlobalIDString = 4594B5A32EB56C44006FD07D;
+			remoteInfo = OutfitEase;
 		};
-		4594B4F02EB55F29006FD07D /* PBXContainerItemProxy */ = {
+		4594B5C12EB56C47006FD07D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 4594B4CB2EB55F28006FD07D /* Project object */;
+			containerPortal = 4594B59C2EB56C44006FD07D /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 4594B4D22EB55F28006FD07D;
-			remoteInfo = outfitEase;
+			remoteGlobalIDString = 4594B5A32EB56C44006FD07D;
+			remoteInfo = OutfitEase;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4594B4D32EB55F28006FD07D /* outfitEase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = outfitEase.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4594B4E52EB55F29006FD07D /* outfitEaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = outfitEaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4594B4EF2EB55F29006FD07D /* outfitEaseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = outfitEaseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4594B5A42EB56C44006FD07D /* OutfitEase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OutfitEase.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4594B5B62EB56C47006FD07D /* OutfitEaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OutfitEaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4594B5C02EB56C47006FD07D /* OutfitEaseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OutfitEaseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		4594B4D52EB55F28006FD07D /* outfitEase */ = {
+		4594B5A62EB56C44006FD07D /* OutfitEase */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = outfitEase;
+			path = OutfitEase;
 			sourceTree = "<group>";
 		};
-		4594B4E82EB55F29006FD07D /* outfitEaseTests */ = {
+		4594B5B92EB56C47006FD07D /* OutfitEaseTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = outfitEaseTests;
+			path = OutfitEaseTests;
 			sourceTree = "<group>";
 		};
-		4594B4F22EB55F29006FD07D /* outfitEaseUITests */ = {
+		4594B5C32EB56C47006FD07D /* OutfitEaseUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = outfitEaseUITests;
+			path = OutfitEaseUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		4594B4D02EB55F28006FD07D /* Frameworks */ = {
+		4594B5A12EB56C44006FD07D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4594B4E22EB55F29006FD07D /* Frameworks */ = {
+		4594B5B32EB56C47006FD07D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4594B4EC2EB55F29006FD07D /* Frameworks */ = {
+		4594B5BD2EB56C47006FD07D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,22 +72,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4594B4CA2EB55F28006FD07D = {
+		4594B59B2EB56C44006FD07D = {
 			isa = PBXGroup;
 			children = (
-				4594B4D52EB55F28006FD07D /* outfitEase */,
-				4594B4E82EB55F29006FD07D /* outfitEaseTests */,
-				4594B4F22EB55F29006FD07D /* outfitEaseUITests */,
-				4594B4D42EB55F28006FD07D /* Products */,
+				4594B5A62EB56C44006FD07D /* OutfitEase */,
+				4594B5B92EB56C47006FD07D /* OutfitEaseTests */,
+				4594B5C32EB56C47006FD07D /* OutfitEaseUITests */,
+				4594B5A52EB56C44006FD07D /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		4594B4D42EB55F28006FD07D /* Products */ = {
+		4594B5A52EB56C44006FD07D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4594B4D32EB55F28006FD07D /* outfitEase.app */,
-				4594B4E52EB55F29006FD07D /* outfitEaseTests.xctest */,
-				4594B4EF2EB55F29006FD07D /* outfitEaseUITests.xctest */,
+				4594B5A42EB56C44006FD07D /* OutfitEase.app */,
+				4594B5B62EB56C47006FD07D /* OutfitEaseTests.xctest */,
+				4594B5C02EB56C47006FD07D /* OutfitEaseUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +95,134 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4594B4D22EB55F28006FD07D /* outfitEase */ = {
+		4594B5A32EB56C44006FD07D /* OutfitEase */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4594B4F92EB55F29006FD07D /* Build configuration list for PBXNativeTarget "outfitEase" */;
+			buildConfigurationList = 4594B5CA2EB56C47006FD07D /* Build configuration list for PBXNativeTarget "OutfitEase" */;
 			buildPhases = (
-				4594B4CF2EB55F28006FD07D /* Sources */,
-				4594B4D02EB55F28006FD07D /* Frameworks */,
-				4594B4D12EB55F28006FD07D /* Resources */,
+				4594B5A02EB56C44006FD07D /* Sources */,
+				4594B5A12EB56C44006FD07D /* Frameworks */,
+				4594B5A22EB56C44006FD07D /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				4594B4D52EB55F28006FD07D /* outfitEase */,
+				4594B5A62EB56C44006FD07D /* OutfitEase */,
 			);
-			name = outfitEase;
+			name = OutfitEase;
 			packageProductDependencies = (
 			);
-			productName = outfitEase;
-			productReference = 4594B4D32EB55F28006FD07D /* outfitEase.app */;
+			productName = OutfitEase;
+			productReference = 4594B5A42EB56C44006FD07D /* OutfitEase.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4594B4E42EB55F29006FD07D /* outfitEaseTests */ = {
+		4594B5B52EB56C47006FD07D /* OutfitEaseTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4594B4FC2EB55F29006FD07D /* Build configuration list for PBXNativeTarget "outfitEaseTests" */;
+			buildConfigurationList = 4594B5CD2EB56C47006FD07D /* Build configuration list for PBXNativeTarget "OutfitEaseTests" */;
 			buildPhases = (
-				4594B4E12EB55F29006FD07D /* Sources */,
-				4594B4E22EB55F29006FD07D /* Frameworks */,
-				4594B4E32EB55F29006FD07D /* Resources */,
+				4594B5B22EB56C47006FD07D /* Sources */,
+				4594B5B32EB56C47006FD07D /* Frameworks */,
+				4594B5B42EB56C47006FD07D /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				4594B4E72EB55F29006FD07D /* PBXTargetDependency */,
+				4594B5B82EB56C47006FD07D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				4594B4E82EB55F29006FD07D /* outfitEaseTests */,
+				4594B5B92EB56C47006FD07D /* OutfitEaseTests */,
 			);
-			name = outfitEaseTests;
+			name = OutfitEaseTests;
 			packageProductDependencies = (
 			);
-			productName = outfitEaseTests;
-			productReference = 4594B4E52EB55F29006FD07D /* outfitEaseTests.xctest */;
+			productName = OutfitEaseTests;
+			productReference = 4594B5B62EB56C47006FD07D /* OutfitEaseTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		4594B4EE2EB55F29006FD07D /* outfitEaseUITests */ = {
+		4594B5BF2EB56C47006FD07D /* OutfitEaseUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4594B4FF2EB55F29006FD07D /* Build configuration list for PBXNativeTarget "outfitEaseUITests" */;
+			buildConfigurationList = 4594B5D02EB56C47006FD07D /* Build configuration list for PBXNativeTarget "OutfitEaseUITests" */;
 			buildPhases = (
-				4594B4EB2EB55F29006FD07D /* Sources */,
-				4594B4EC2EB55F29006FD07D /* Frameworks */,
-				4594B4ED2EB55F29006FD07D /* Resources */,
+				4594B5BC2EB56C47006FD07D /* Sources */,
+				4594B5BD2EB56C47006FD07D /* Frameworks */,
+				4594B5BE2EB56C47006FD07D /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				4594B4F12EB55F29006FD07D /* PBXTargetDependency */,
+				4594B5C22EB56C47006FD07D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				4594B4F22EB55F29006FD07D /* outfitEaseUITests */,
+				4594B5C32EB56C47006FD07D /* OutfitEaseUITests */,
 			);
-			name = outfitEaseUITests;
+			name = OutfitEaseUITests;
 			packageProductDependencies = (
 			);
-			productName = outfitEaseUITests;
-			productReference = 4594B4EF2EB55F29006FD07D /* outfitEaseUITests.xctest */;
+			productName = OutfitEaseUITests;
+			productReference = 4594B5C02EB56C47006FD07D /* OutfitEaseUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		4594B4CB2EB55F28006FD07D /* Project object */ = {
+		4594B59C2EB56C44006FD07D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
-					4594B4D22EB55F28006FD07D = {
+					4594B5A32EB56C44006FD07D = {
 						CreatedOnToolsVersion = 16.4;
 					};
-					4594B4E42EB55F29006FD07D = {
+					4594B5B52EB56C47006FD07D = {
 						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 4594B4D22EB55F28006FD07D;
+						TestTargetID = 4594B5A32EB56C44006FD07D;
 					};
-					4594B4EE2EB55F29006FD07D = {
+					4594B5BF2EB56C47006FD07D = {
 						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 4594B4D22EB55F28006FD07D;
+						TestTargetID = 4594B5A32EB56C44006FD07D;
 					};
 				};
 			};
-			buildConfigurationList = 4594B4CE2EB55F28006FD07D /* Build configuration list for PBXProject "outfitEase" */;
+			buildConfigurationList = 4594B59F2EB56C44006FD07D /* Build configuration list for PBXProject "OutfitEase" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 4594B4CA2EB55F28006FD07D;
+			mainGroup = 4594B59B2EB56C44006FD07D;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 4594B4D42EB55F28006FD07D /* Products */;
+			productRefGroup = 4594B5A52EB56C44006FD07D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4594B4D22EB55F28006FD07D /* outfitEase */,
-				4594B4E42EB55F29006FD07D /* outfitEaseTests */,
-				4594B4EE2EB55F29006FD07D /* outfitEaseUITests */,
+				4594B5A32EB56C44006FD07D /* OutfitEase */,
+				4594B5B52EB56C47006FD07D /* OutfitEaseTests */,
+				4594B5BF2EB56C47006FD07D /* OutfitEaseUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		4594B4D12EB55F28006FD07D /* Resources */ = {
+		4594B5A22EB56C44006FD07D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4594B4E32EB55F29006FD07D /* Resources */ = {
+		4594B5B42EB56C47006FD07D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4594B4ED2EB55F29006FD07D /* Resources */ = {
+		4594B5BE2EB56C47006FD07D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +232,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		4594B4CF2EB55F28006FD07D /* Sources */ = {
+		4594B5A02EB56C44006FD07D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4594B4E12EB55F29006FD07D /* Sources */ = {
+		4594B5B22EB56C47006FD07D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4594B4EB2EB55F29006FD07D /* Sources */ = {
+		4594B5BC2EB56C47006FD07D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +256,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		4594B4E72EB55F29006FD07D /* PBXTargetDependency */ = {
+		4594B5B82EB56C47006FD07D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4594B4D22EB55F28006FD07D /* outfitEase */;
-			targetProxy = 4594B4E62EB55F29006FD07D /* PBXContainerItemProxy */;
+			target = 4594B5A32EB56C44006FD07D /* OutfitEase */;
+			targetProxy = 4594B5B72EB56C47006FD07D /* PBXContainerItemProxy */;
 		};
-		4594B4F12EB55F29006FD07D /* PBXTargetDependency */ = {
+		4594B5C22EB56C47006FD07D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4594B4D22EB55F28006FD07D /* outfitEase */;
-			targetProxy = 4594B4F02EB55F29006FD07D /* PBXContainerItemProxy */;
+			target = 4594B5A32EB56C44006FD07D /* OutfitEase */;
+			targetProxy = 4594B5C12EB56C47006FD07D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		4594B4F72EB55F29006FD07D /* Debug */ = {
+		4594B5C82EB56C47006FD07D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -332,7 +332,7 @@
 			};
 			name = Debug;
 		};
-		4594B4F82EB55F29006FD07D /* Release */ = {
+		4594B5C92EB56C47006FD07D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -388,7 +388,7 @@
 			};
 			name = Release;
 		};
-		4594B4FA2EB55F29006FD07D /* Debug */ = {
+		4594B5CB2EB56C47006FD07D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -407,7 +407,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.outfitEase;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.OutfitEase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -415,7 +415,7 @@
 			};
 			name = Debug;
 		};
-		4594B4FB2EB55F29006FD07D /* Release */ = {
+		4594B5CC2EB56C47006FD07D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -434,7 +434,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.outfitEase;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.OutfitEase;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -442,7 +442,7 @@
 			};
 			name = Release;
 		};
-		4594B4FD2EB55F29006FD07D /* Debug */ = {
+		4594B5CE2EB56C47006FD07D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -451,16 +451,16 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.outfitEaseTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.OutfitEaseTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/outfitEase.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/outfitEase";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OutfitEase.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OutfitEase";
 			};
 			name = Debug;
 		};
-		4594B4FE2EB55F29006FD07D /* Release */ = {
+		4594B5CF2EB56C47006FD07D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -469,87 +469,87 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.outfitEaseTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.OutfitEaseTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/outfitEase.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/outfitEase";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OutfitEase.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OutfitEase";
 			};
 			name = Release;
 		};
-		4594B5002EB55F29006FD07D /* Debug */ = {
+		4594B5D12EB56C47006FD07D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.outfitEaseUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.OutfitEaseUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = outfitEase;
+				TEST_TARGET_NAME = OutfitEase;
 			};
 			name = Debug;
 		};
-		4594B5012EB55F29006FD07D /* Release */ = {
+		4594B5D22EB56C47006FD07D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.outfitEaseUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Hiro.OutfitEaseUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = outfitEase;
+				TEST_TARGET_NAME = OutfitEase;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4594B4CE2EB55F28006FD07D /* Build configuration list for PBXProject "outfitEase" */ = {
+		4594B59F2EB56C44006FD07D /* Build configuration list for PBXProject "OutfitEase" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4594B4F72EB55F29006FD07D /* Debug */,
-				4594B4F82EB55F29006FD07D /* Release */,
+				4594B5C82EB56C47006FD07D /* Debug */,
+				4594B5C92EB56C47006FD07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4594B4F92EB55F29006FD07D /* Build configuration list for PBXNativeTarget "outfitEase" */ = {
+		4594B5CA2EB56C47006FD07D /* Build configuration list for PBXNativeTarget "OutfitEase" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4594B4FA2EB55F29006FD07D /* Debug */,
-				4594B4FB2EB55F29006FD07D /* Release */,
+				4594B5CB2EB56C47006FD07D /* Debug */,
+				4594B5CC2EB56C47006FD07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4594B4FC2EB55F29006FD07D /* Build configuration list for PBXNativeTarget "outfitEaseTests" */ = {
+		4594B5CD2EB56C47006FD07D /* Build configuration list for PBXNativeTarget "OutfitEaseTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4594B4FD2EB55F29006FD07D /* Debug */,
-				4594B4FE2EB55F29006FD07D /* Release */,
+				4594B5CE2EB56C47006FD07D /* Debug */,
+				4594B5CF2EB56C47006FD07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4594B4FF2EB55F29006FD07D /* Build configuration list for PBXNativeTarget "outfitEaseUITests" */ = {
+		4594B5D02EB56C47006FD07D /* Build configuration list for PBXNativeTarget "OutfitEaseUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4594B5002EB55F29006FD07D /* Debug */,
-				4594B5012EB55F29006FD07D /* Release */,
+				4594B5D12EB56C47006FD07D /* Debug */,
+				4594B5D22EB56C47006FD07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 4594B4CB2EB55F28006FD07D /* Project object */;
+	rootObject = 4594B59C2EB56C44006FD07D /* Project object */;
 }
