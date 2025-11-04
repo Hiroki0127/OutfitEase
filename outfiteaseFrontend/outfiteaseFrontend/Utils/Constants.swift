@@ -1,7 +1,9 @@
 import Foundation
 
 struct Constants {
-    // MARK: - API Base URL (Render Production)
+    // MARK: - API Base URL (Production)
+    // Production server: https://outfitease.onrender.com
+    // For local testing: http://127.0.0.1:3000
     static let baseURL = "https://outfitease.onrender.com"
     
     // MARK: - API Endpoints
