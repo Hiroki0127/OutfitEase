@@ -61,15 +61,10 @@ const loginUser = async (req, res) => {
   }
 
   try {
-    // Find user by email with timeout
+    // Find user by email
     console.log('🔍 Looking for user with email:', email);
     const startTime = Date.now();
-    const userResult = await Promise.race([
-      pool.query('SELECT * FROM users WHERE email = $1', [email]),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database query timeout')), 10000)
-      )
-    ]);
+    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     console.log(`🔍 Query took ${Date.now() - startTime}ms`);
     console.log('🔍 User found:', userResult.rows.length > 0);
     if (userResult.rows.length === 0) {
@@ -85,8 +80,13 @@ const loginUser = async (req, res) => {
     }
 
     // Create JWT token
+    if (!process.env.JWT_SECRET) {
+      console.error('❌ JWT_SECRET is not set!');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+    
     const token = jwt.sign(
-      { userId: user.id, email: user.email, role : user.role},
+      { userId: user.id, email: user.email, role: user.role || 'user'},
       process.env.JWT_SECRET,
       { expiresIn: '60d' }
     );
@@ -105,7 +105,15 @@ const loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error('Login Error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    res.status(500).json({ 
+      message: 'Server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
