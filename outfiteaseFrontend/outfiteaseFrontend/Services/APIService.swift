@@ -4,6 +4,15 @@ class APIService {
     static let shared = APIService()
     private let baseURL = Constants.baseURL
     
+    // Custom URLSession with longer timeout for Render free tier wake-up
+    private lazy var urlSession: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 120 // 120 seconds for Render wake-up (50-60 sec wake + buffer)
+        configuration.timeoutIntervalForResource = 120
+        configuration.waitsForConnectivity = true // Wait for network connectivity
+        return URLSession(configuration: configuration)
+    }()
+    
     private init() {}
     
     // Test connectivity to the server
@@ -14,7 +23,7 @@ class APIService {
         }
         
         do {
-            let (_, response) = try await URLSession.shared.data(from: url)
+            let (_, response) = try await urlSession.data(from: url)
             if let httpResponse = response as? HTTPURLResponse {
                 print("✅ Server connectivity test: \(httpResponse.statusCode)")
                 return httpResponse.statusCode == 200
@@ -29,7 +38,8 @@ class APIService {
         endpoint: String,
         method: HTTPMethod = .GET,
         body: Data? = nil,
-        requiresAuth: Bool = true
+        requiresAuth: Bool = true,
+        retryCount: Int = 2
     ) async throws -> T {
         print("🌐 API Request: \(method.rawValue) \(endpoint)")
         
@@ -40,6 +50,8 @@ class APIService {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        // Set timeout directly on request as well
+        request.timeoutInterval = 120
         
         if requiresAuth {
             if let token = UserDefaults.standard.string(forKey: Constants.UserDefaults.authToken) {
@@ -61,10 +73,40 @@ class APIService {
         print("📋 Request method: \(request.httpMethod ?? "Unknown")")
         print("📦 Request body: \(String(data: request.httpBody ?? Data(), encoding: .utf8) ?? "None")")
         print("📧 Request headers: \(request.allHTTPHeaderFields ?? [:])")
+        print("⏱️ Request timeout: \(request.timeoutInterval) seconds")
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        // Retry logic for Render wake-up delays
+        var data: Data?
+        var response: URLResponse?
+        var lastError: Error?
         
-        guard let httpResponse = response as? HTTPURLResponse else {
+        for attempt in 0...retryCount {
+            if attempt > 0 {
+                print("🔄 Retry attempt \(attempt)/\(retryCount)")
+                try? await Task.sleep(nanoseconds: UInt64(attempt * 2_000_000_000)) // 2s, 4s delays
+            }
+            
+            do {
+                let result = try await urlSession.data(for: request)
+                data = result.0
+                response = result.1
+                lastError = nil
+                print("✅ Request succeeded on attempt \(attempt + 1)")
+                break
+            } catch {
+                lastError = error
+                print("⚠️ Attempt \(attempt + 1) failed: \(error.localizedDescription)")
+                if attempt < retryCount {
+                    continue
+                }
+            }
+        }
+        
+        guard let finalData = data, let finalResponse = response else {
+            throw lastError ?? APIError.invalidResponse
+        }
+        
+        guard let httpResponse = finalResponse as? HTTPURLResponse else {
             throw APIError.invalidResponse
         }
         
@@ -73,14 +115,14 @@ class APIService {
         guard httpResponse.statusCode >= 200 && httpResponse.statusCode < 300 else {
             print("❌ HTTP Error: \(httpResponse.statusCode)")
             print("📄 Response headers: \(httpResponse.allHeaderFields)")
-            if let responseText = String(data: data, encoding: .utf8) {
+            if let responseText = String(data: finalData, encoding: .utf8) {
                 print("📄 Response body: \(responseText)")
             }
             throw APIError.httpError(statusCode: httpResponse.statusCode)
         }
         
         do {
-            let decodedData = try JSONDecoder().decode(T.self, from: data)
+            let decodedData = try JSONDecoder().decode(T.self, from: finalData)
             print("✅ Request successful")
             return decodedData
         } catch {

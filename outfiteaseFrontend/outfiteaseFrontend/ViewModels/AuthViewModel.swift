@@ -38,9 +38,15 @@ class AuthViewModel: ObservableObject {
         
         print("🔐 Starting login process...")
         
-        // Test connectivity first
+        // Wake up server first (Render free tier spins down after inactivity)
+        print("⏰ Waking up server...")
         let isConnected = await APIService.shared.testConnectivity()
         print("🌐 Server connectivity: \(isConnected)")
+        
+        // Small delay to ensure server is fully awake
+        if isConnected {
+            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+        }
         
         do {
             let response = try await authService.login(email: email, password: password)
