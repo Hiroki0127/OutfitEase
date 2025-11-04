@@ -61,9 +61,16 @@ const loginUser = async (req, res) => {
   }
 
   try {
-    // Find user by email
+    // Find user by email with timeout
     console.log('🔍 Looking for user with email:', email);
-    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const startTime = Date.now();
+    const userResult = await Promise.race([
+      pool.query('SELECT * FROM users WHERE email = $1', [email]),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database query timeout')), 10000)
+      )
+    ]);
+    console.log(`🔍 Query took ${Date.now() - startTime}ms`);
     console.log('🔍 User found:', userResult.rows.length > 0);
     if (userResult.rows.length === 0) {
       console.log('❌ User not found');
