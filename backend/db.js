@@ -11,8 +11,30 @@ const isSupabase = process.env.DATABASE_URL?.includes('supabase.co');
 // Use internal database URL if available (better for Render)
 const databaseUrl = process.env.DATABASE_URL || process.env.INTERNAL_DATABASE_URL;
 
+// Parse connection string to extract host and force IPv4 resolution
+let connectionConfig = {};
+if (databaseUrl) {
+  try {
+    const url = new URL(databaseUrl);
+    connectionConfig = {
+      host: url.hostname,
+      port: parseInt(url.port) || 5432,
+      database: url.pathname.slice(1) || 'postgres',
+      user: url.username || 'postgres',
+      password: url.password || '',
+      // Force IPv4 to avoid IPv6 issues
+      family: 4
+    };
+  } catch (e) {
+    // Fallback to connection string if parsing fails
+    connectionConfig.connectionString = databaseUrl;
+  }
+}
+
 const poolConfig = {
-  connectionString: databaseUrl,
+  ...connectionConfig,
+  // Use connectionString if host-based config failed
+  connectionString: connectionConfig.host ? undefined : databaseUrl,
   // Increased timeouts for free tier databases
   connectionTimeoutMillis: 30000, // 30 seconds to connect
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
@@ -24,9 +46,7 @@ const poolConfig = {
   } : false,
   // Allow connection to be kept alive
   keepAlive: true,
-  keepAliveInitialDelayMillis: 10000,
-  // Force IPv4 to avoid IPv6 issues
-  family: 4
+  keepAliveInitialDelayMillis: 10000
 };
 
 console.log('🔌 Initializing database pool...');
