@@ -61,10 +61,36 @@ const loginUser = async (req, res) => {
   }
 
   try {
+    // Check database connection first
+    if (!pool) {
+      console.error('❌ Database pool is not initialized!');
+      return res.status(500).json({ 
+        message: 'Database connection error',
+        error: 'Database pool not initialized'
+      });
+    }
+    
     // Find user by email
     console.log('🔍 Looking for user with email:', email);
     const startTime = Date.now();
-    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    
+    let userResult;
+    try {
+      userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    } catch (dbError) {
+      console.error('❌ Database query error:', dbError);
+      console.error('Database error details:', {
+        message: dbError.message,
+        code: dbError.code,
+        name: dbError.name
+      });
+      return res.status(500).json({ 
+        message: 'Database error',
+        error: dbError.message,
+        code: dbError.code || 'DB_ERROR'
+      });
+    }
+    
     console.log(`🔍 Query took ${Date.now() - startTime}ms`);
     console.log('🔍 User found:', userResult.rows.length > 0);
     if (userResult.rows.length === 0) {
@@ -108,11 +134,19 @@ const loginUser = async (req, res) => {
     console.error('Error details:', {
       message: error.message,
       stack: error.stack,
-      name: error.name
+      name: error.name,
+      code: error.code
     });
+    
+    // Return more detailed error for debugging (safe for production)
+    const errorMessage = error.message || 'Unknown error';
+    const errorCode = error.code || 'NO_CODE';
+    
     res.status(500).json({ 
       message: 'Server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: errorMessage,
+      code: errorCode,
+      type: error.name || 'Error'
     });
   }
 };
