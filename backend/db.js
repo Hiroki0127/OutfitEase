@@ -1,5 +1,9 @@
 const { Pool } = require('pg');
+const dns = require('dns');
 require('dotenv').config();
+
+// Force IPv4 DNS resolution to avoid IPv6 issues
+dns.setDefaultResultOrder('ipv4first');
 
 // Database connection configuration
 const isRender = process.env.DATABASE_URL?.includes('render.com') || 
