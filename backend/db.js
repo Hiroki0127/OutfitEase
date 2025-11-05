@@ -1,9 +1,11 @@
 const { Pool } = require('pg');
 const dns = require('dns');
+const { promisify } = require('util');
 require('dotenv').config();
 
 // Force IPv4 DNS resolution to avoid IPv6 issues
 dns.setDefaultResultOrder('ipv4first');
+const dnsLookup = promisify(dns.lookup);
 
 // Database connection configuration
 const isRender = process.env.DATABASE_URL?.includes('render.com') || 
@@ -20,6 +22,9 @@ let connectionConfig = {};
 if (databaseUrl) {
   try {
     const url = new URL(databaseUrl);
+    
+    // For Supabase, try to resolve to IPv4 explicitly to avoid IPv6 issues
+    // We'll use the hostname but ensure family: 4 is set
     connectionConfig = {
       host: url.hostname,
       port: parseInt(url.port) || 5432,
@@ -29,6 +34,17 @@ if (databaseUrl) {
       // Force IPv4 to avoid IPv6 issues
       family: 4
     };
+    
+    // Try to resolve DNS to IPv4 in background (for logging)
+    if (isSupabase) {
+      dnsLookup(url.hostname, { family: 4 })
+        .then(resolved => {
+          console.log(`🌐 Resolved ${url.hostname} to IPv4: ${resolved.address}`);
+        })
+        .catch(() => {
+          console.warn(`⚠️  Could not resolve ${url.hostname} to IPv4`);
+        });
+    }
   } catch (e) {
     // Fallback to connection string if parsing fails
     connectionConfig.connectionString = databaseUrl;
@@ -61,7 +77,8 @@ console.log('📊 Pool config:', {
   sslEnabled: !!poolConfig.ssl,
   isSupabase: isSupabase,
   isRender: isRender,
-  databaseHost: databaseUrl ? new URL(databaseUrl).hostname : 'none'
+  databaseHost: databaseUrl ? new URL(databaseUrl).hostname : 'none',
+  usingIPv4: poolConfig.family === 4
 });
 
 const pool = new Pool(poolConfig);
