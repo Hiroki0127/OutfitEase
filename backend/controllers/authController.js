@@ -75,11 +75,32 @@ const loginUser = async (req, res) => {
     const startTime = Date.now();
     
     let userResult;
-    try {
-      userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    } catch (dbError) {
-      console.error('❌ Database query error:', dbError);
-      console.error('Database error details:', {
+    let retries = 3;
+    let dbError = null;
+    
+    while (retries > 0) {
+      try {
+        console.log(`🔍 Attempting database query (${4 - retries}/3)...`);
+        userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        dbError = null;
+        break; // Success!
+      } catch (error) {
+        dbError = error;
+        retries--;
+        console.error(`❌ Database query attempt failed:`, error.message);
+        console.error('Error code:', error.code);
+        
+        if (retries > 0) {
+          const waitTime = (4 - retries) * 2000; // 2s, 4s, 6s
+          console.log(`⏳ Retrying in ${waitTime/1000} seconds...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+        }
+      }
+    }
+    
+    if (dbError) {
+      console.error('❌ All database query attempts failed');
+      console.error('Final error:', {
         message: dbError.message,
         code: dbError.code,
         name: dbError.name
