@@ -24,9 +24,30 @@ const registerUser = async (req, res) => {
       });
     }
 
+    // Helper function to retry database queries
+    const retryQuery = async (queryFn, maxRetries = 3) => {
+      let lastError = null;
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          return await queryFn();
+        } catch (error) {
+          lastError = error;
+          console.error(`❌ Database query attempt ${attempt}/${maxRetries} failed:`, error.message);
+          if (attempt < maxRetries) {
+            const waitTime = attempt * 1000; // 1s, 2s, 3s
+            console.log(`⏳ Retrying in ${waitTime/1000} seconds...`);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+          }
+        }
+      }
+      throw lastError;
+    };
+
     // Check if user exists
     console.log('🔍 Checking if user exists...');
-    const userCheck = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const userCheck = await retryQuery(async () => {
+      return await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    });
     if (userCheck.rows.length > 0) {
       console.log('❌ User already exists');
       return res.status(400).json({ message: 'User already exists' });
@@ -38,10 +59,12 @@ const registerUser = async (req, res) => {
 
     // Insert user
     console.log('➕ Inserting new user...');
-    const newUser = await pool.query(
-      'INSERT INTO users (email, username, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, email, username, created_at, role',
-      [email, username, hashedPassword, role]
-    );
+    const newUser = await retryQuery(async () => {
+      return await pool.query(
+        'INSERT INTO users (email, username, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, email, username, created_at, role',
+        [email, username, hashedPassword, role]
+      );
+    });
 
     // Create JWT token
     if (!process.env.JWT_SECRET) {

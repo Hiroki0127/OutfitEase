@@ -24,7 +24,7 @@ const poolConfig = {
   connectionString: databaseUrl,
   // Increased timeouts for free tier databases
   connectionTimeoutMillis: 30000, // 30 seconds to connect
-  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+  idleTimeoutMillis: 60000, // Close idle clients after 60 seconds (increased)
   max: 5, // Connection pool size
   // SSL configuration
   ssl: isSupabase || isRender ? {
