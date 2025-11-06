@@ -125,18 +125,33 @@ exports.updateOutfit = async (
   try {
     await client.query('BEGIN');
 
+    console.log('📝 Updating outfit in database:', {
+      outfitId,
+      userId,
+      name,
+      description,
+      totalPrice,
+      imageURL,
+      style,
+      color,
+      brand,
+      season,
+      occasion,
+      clothingItemIds
+    });
+
     const updateQuery = `
       UPDATE outfits
       SET
-        name = $1,
-        description = $2,
-        total_price = $3,
-        image_url = $4,
-        style = $5,
-        color = $6,
-        brand = $7,
-        season = $8,
-        occasion = $9
+        name = COALESCE($1, name),
+        description = COALESCE($2, description),
+        total_price = COALESCE($3, total_price),
+        image_url = COALESCE($4, image_url),
+        style = COALESCE($5, style),
+        color = COALESCE($6, color),
+        brand = COALESCE($7, brand),
+        season = COALESCE($8, season),
+        occasion = COALESCE($9, occasion)
       WHERE id = $10 AND user_id = $11
       RETURNING *;
     `;
@@ -189,15 +204,16 @@ exports.updateOutfit = async (
     // Format clothing items to match iOS expectations
     const formattedItems = itemsRes.rows.map(item => ({
       id: item.id.toString(), // Convert UUID to string
-      user_id: item.user_id,
+      user_id: item.user_id.toString(),
       name: item.name,
       type: item.type,
       color: item.color,
       style: item.style,
       brand: item.brand,
       price: item.price ? parseFloat(item.price) : null, // Convert string to number
-      season: item.season,
-      occasion: item.occasion,
+      // Convert season and occasion strings to arrays (iOS expects arrays)
+      season: item.season ? [item.season] : null,
+      occasion: item.occasion ? [item.occasion] : null,
       image_url: item.image_url,
       created_at: item.created_at
     }));
@@ -207,7 +223,16 @@ exports.updateOutfit = async (
       items: formattedItems
     };
   } catch (err) {
-    await client.query('ROLLBACK');
+    await client.query('ROLLBACK').catch(rollbackErr => {
+      console.error('Error during rollback:', rollbackErr);
+    });
+    console.error('❌ Error updating outfit:', err);
+    console.error('Error details:', {
+      message: err.message,
+      stack: err.stack,
+      code: err.code,
+      name: err.name
+    });
     throw err;
   } finally {
     client.release();

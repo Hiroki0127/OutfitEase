@@ -164,7 +164,16 @@ exports.updateOutfit = async (req, res) => {
     res.json(updated);
   } catch (err) {
     console.error("Failed to update outfit:", err);
-    res.status(500).json({ error: "Failed to update outfit" });
+    console.error("Error details:", {
+      message: err.message,
+      stack: err.stack,
+      code: err.code,
+      name: err.name
+    });
+    res.status(500).json({ 
+      error: "Failed to update outfit",
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 };
 
