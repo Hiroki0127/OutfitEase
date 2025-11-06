@@ -68,6 +68,11 @@ exports.getAllPosts = async (req, res) => {
     const transformedPosts = posts.map(post => {
       const transformedPost = { ...post };
       
+      // Set image_url from outfit if it exists (posts table doesn't have image_url)
+      if (post.image_url && !transformedPost.image_url) {
+        transformedPost.image_url = post.image_url;
+      }
+      
       // Create outfit object if outfit_id exists
       if (post.outfit_id) {
         transformedPost.outfit = {
