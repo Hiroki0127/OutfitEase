@@ -3,43 +3,90 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const registerUser = async (req, res) => {
-  const { email, username, password , role = 'user'} = req.body;
+  const { email, username, password, role = 'user' } = req.body;
+
+  console.log('📝 Register request received');
+  console.log('📧 Email:', email);
+  console.log('👤 Username:', username);
+
+  // Validate required fields
+  if (!email || !username || !password) {
+    return res.status(400).json({ message: 'Email, username, and password are required' });
+  }
 
   try {
+    // Check database connection first
+    if (!pool) {
+      console.error('❌ Database pool is not initialized!');
+      return res.status(500).json({ 
+        message: 'Database connection error',
+        error: 'Database pool not initialized'
+      });
+    }
+
     // Check if user exists
+    console.log('🔍 Checking if user exists...');
     const userCheck = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (userCheck.rows.length > 0) {
+      console.log('❌ User already exists');
       return res.status(400).json({ message: 'User already exists' });
     }
 
     // Hash password
+    console.log('🔐 Hashing password...');
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert user
+    console.log('➕ Inserting new user...');
     const newUser = await pool.query(
-      'INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING id, email, username',
-      [email, username, hashedPassword]
+      'INSERT INTO users (email, username, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, email, username, created_at, role',
+      [email, username, hashedPassword, role]
     );
 
+    // Create JWT token
+    if (!process.env.JWT_SECRET) {
+      console.error('❌ JWT_SECRET is not set!');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+
+    const token = jwt.sign(
+      { userId: newUser.rows[0].id, email: newUser.rows[0].email, role: newUser.rows[0].role || 'user' },
+      process.env.JWT_SECRET,
+      { expiresIn: '60d' }
+    );
+
+    console.log('✅ Registration successful');
     res.status(201).json({ 
-      token: jwt.sign(
-        { userId: newUser.rows[0].id, email: newUser.rows[0].email, role: 'user' },
-        process.env.JWT_SECRET,
-        { expiresIn: '60d' }
-      ),
+      token,
       user: { 
         id: newUser.rows[0].id, 
         email: newUser.rows[0].email, 
         username: newUser.rows[0].username,
         avatar_url: null,
-        created_at: new Date().toISOString(),
-        role: 'user'
+        created_at: newUser.rows[0].created_at,
+        role: newUser.rows[0].role || 'user'
       },
       message: 'Registration successful'
     });
   } catch (error) {
-    console.error('Register Error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('❌ Register Error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      code: error.code
+    });
+    
+    // Return more detailed error for debugging
+    const errorMessage = error.message || 'Unknown error';
+    const errorCode = error.code || 'NO_CODE';
+    
+    res.status(500).json({ 
+      message: 'Database error',
+      error: errorMessage,
+      code: errorCode,
+      type: error.name || 'Error'
+    });
   }
 };
 
