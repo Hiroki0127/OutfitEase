@@ -37,6 +37,22 @@ const poolConfig = {
 };
 
 console.log('🔌 Initializing database pool...');
+if (databaseUrl) {
+  try {
+    const url = new URL(databaseUrl);
+    console.log('📊 Connection string details:', {
+      host: url.hostname,
+      port: url.port || 'default',
+      user: url.username,
+      database: url.pathname,
+      hasPassword: !!url.password,
+      isPooler: url.hostname.includes('pooler'),
+      isSessionPooler: url.port === '6543'
+    });
+  } catch (e) {
+    console.warn('⚠️  Could not parse connection string');
+  }
+}
 console.log('📊 Pool config:', {
   hasConnectionString: !!process.env.DATABASE_URL,
   connectionTimeout: poolConfig.connectionTimeoutMillis,
@@ -61,8 +77,30 @@ setTimeout(() => {
     if (err) {
       console.error('❌ Database connection test failed:', err.message);
       console.error('Error code:', err.code);
+      console.error('Error details:', {
+        message: err.message,
+        code: err.code,
+        name: err.name,
+        stack: err.stack
+      });
+      // Check connection string format
+      if (databaseUrl) {
+        try {
+          const url = new URL(databaseUrl);
+          console.error('Connection string details:', {
+            host: url.hostname,
+            port: url.port,
+            user: url.username,
+            database: url.pathname,
+            hasPassword: !!url.password
+          });
+        } catch (e) {
+          console.error('Could not parse connection string');
+        }
+      }
     } else {
       console.log('✅ Database connection test successful');
+      console.log('Database time:', res.rows[0].now);
     }
   });
 }, 2000); // Wait 2 seconds for app to fully start

@@ -33,6 +33,13 @@ const registerUser = async (req, res) => {
         } catch (error) {
           lastError = error;
           console.error(`❌ Database query attempt ${attempt}/${maxRetries} failed:`, error.message);
+          console.error('Error details:', {
+            message: error.message,
+            code: error.code,
+            name: error.name,
+            errno: error.errno,
+            syscall: error.syscall
+          });
           if (attempt < maxRetries) {
             const waitTime = attempt * 1000; // 1s, 2s, 3s
             console.log(`⏳ Retrying in ${waitTime/1000} seconds...`);
