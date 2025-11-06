@@ -59,7 +59,10 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
   try {
+    console.log('📋 Getting all posts...');
+    console.log('👤 User ID:', req.user?.userId);
     const posts = await postModel.getAllPosts(req.user?.userId);
+    console.log(`✅ Found ${posts.length} posts`);
     
     // Transform posts to include structured outfit data
     const transformedPosts = posts.map(post => {
