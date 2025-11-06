@@ -27,15 +27,16 @@ exports.getByUserId = async (userId) => {
     // Format the response to match iOS expectations
     return result.rows.map(item => ({
       id: item.id.toString(), // Convert UUID to string
-      user_id: item.user_id,
+      user_id: item.user_id.toString(),
       name: item.name,
       type: item.type,
       color: item.color,
       style: item.style,
       brand: item.brand,
       price: item.price ? parseFloat(item.price) : null, // Convert string to number
-      season: item.season,
-      occasion: item.occasion,
+      // Convert season and occasion strings to arrays (iOS expects arrays)
+      season: item.season ? [item.season] : null,
+      occasion: item.occasion ? [item.occasion] : null,
       image_url: item.image_url,
       created_at: item.created_at
     }));
@@ -72,8 +73,9 @@ exports.update = async (id, userId, data) => {
         style: item.style,
         brand: item.brand,
         price: item.price ? parseFloat(item.price) : null, // Convert string to number
-        season: item.season,
-        occasion: item.occasion,
+        // Convert season and occasion strings to arrays (iOS expects arrays)
+        season: item.season ? [item.season] : null,
+        occasion: item.occasion ? [item.occasion] : null,
         image_url: item.image_url,
         created_at: item.created_at
       };
@@ -166,15 +168,16 @@ exports.getFilteredClothingItems = async (userId, filters) => {
     // Format the response to match iOS expectations
     return result.rows.map(item => ({
       id: item.id.toString(), // Convert UUID to string
-      user_id: item.user_id,
+      user_id: item.user_id.toString(),
       name: item.name,
       type: item.type,
       color: item.color,
       style: item.style,
       brand: item.brand,
       price: item.price ? parseFloat(item.price) : null, // Convert string to number
-      season: item.season,
-      occasion: item.occasion,
+      // Convert season and occasion strings to arrays (iOS expects arrays)
+      season: item.season ? [item.season] : null,
+      occasion: item.occasion ? [item.occasion] : null,
       image_url: item.image_url,
       created_at: item.created_at
     }));
