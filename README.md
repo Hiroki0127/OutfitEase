@@ -38,7 +38,8 @@ OutfitEase is a comprehensive mobile application that simplifies and enhances th
 
 ### Backend (Node.js/Express)
 - **RESTful API**: Clean, scalable API design
-- **PostgreSQL Database**: Robust data storage with proper indexing
+- **PostgreSQL Database**: Supabase (hosted PostgreSQL with connection pooling)
+- **Deployment**: Render (serverless hosting)
 - **JWT Authentication**: Secure user authentication
 - **File Upload**: Cloudinary integration for image storage
 - **Weather API**: OpenWeatherMap integration
@@ -114,14 +115,16 @@ npm test
 
 ### Prerequisites
 - Node.js (v16 or higher)
-- PostgreSQL (v12 or higher)
 - Xcode (v14 or higher)
 - iOS 15.0+ for mobile app
+- Supabase account (for database hosting)
+- Render account (for backend hosting)
 - OpenWeatherMap API key (for weather features)
+- Cloudinary account (for image storage)
 
-### Backend Setup (Render Deployment)
+### Backend Setup
 
-The backend is designed to run on Render. See the [Deployment](#-deployment) section below for setup instructions.
+The backend is deployed on **Render** with **Supabase** as the database. See the [Deployment](#-deployment) section below for setup instructions.
 
 ### iOS App Setup
 1. Open the iOS project in Xcode
@@ -132,63 +135,106 @@ The backend is designed to run on Render. See the [Deployment](#-deployment) sec
 
 ## 🚀 Deployment
 
-### Render Deployment (Production)
+### Production Setup: Render + Supabase
 
-The backend can be deployed to Render for production use. See the detailed deployment guide:
+The app is deployed with:
+- **Backend**: Render (serverless Node.js hosting)
+- **Database**: Supabase (PostgreSQL with connection pooling)
+- **Production URL**: `https://outfitease.onrender.com`
 
-**📖 Full Guide**: [`backend/RENDER_DEPLOYMENT.md`](backend/RENDER_DEPLOYMENT.md)
+#### Step 1: Set Up Supabase Database
 
-#### Quick Start with Render
+1. **Create Supabase Project**
+   - Go to [Supabase Dashboard](https://supabase.com/dashboard)
+   - Create a new project
+   - Wait for database to initialize
+
+2. **Initialize Database Schema**
+   - Go to SQL Editor in Supabase
+   - Copy and paste the contents of `backend/schema.sql`
+   - Run the SQL script
+
+3. **Get Connection String**
+   - Go to Settings → Database → Connection pooling
+   - Select **Session** mode
+   - Copy the connection string (should include `:6543` port)
+   - Example: `postgresql://postgres.xxx:PASSWORD@xxx.pooler.supabase.com:6543/postgres`
+
+#### Step 2: Deploy Backend to Render
 
 1. **Push code to GitHub**
    ```bash
    git push origin main
    ```
 
-2. **Connect to Render**
+2. **Create Web Service on Render**
    - Go to [Render Dashboard](https://dashboard.render.com)
-   - Click "New" → "Blueprint"
+   - Click "New" → "Web Service"
    - Connect your GitHub repository
-   - Render will detect `render.yaml` automatically
+   - Settings:
+     - **Build Command**: `cd backend && npm install`
+     - **Start Command**: `cd backend && npm start`
+     - **Plan**: Free (or paid for production)
 
-3. **Set Environment Variables**
-   - Configure in Render dashboard:
-     - `CLOUDINARY_CLOUD_NAME`
-     - `CLOUDINARY_API_KEY`
-     - `CLOUDINARY_API_SECRET`
-     - `OPENWEATHER_API_KEY`
-   - `JWT_SECRET` is auto-generated
-   - `DATABASE_URL` is automatically provided
+3. **Set Environment Variables in Render**
+   - Go to your service → Environment tab
+   - Add these variables:
+     - `DATABASE_URL` - Paste your Supabase connection string (Session pooler, port 6543)
+     - `JWT_SECRET` - Generate a secure random string (32+ characters)
+     - `CLOUDINARY_CLOUD_NAME` - Your Cloudinary cloud name
+     - `CLOUDINARY_API_KEY` - Your Cloudinary API key
+     - `CLOUDINARY_API_SECRET` - Your Cloudinary API secret
+     - `OPENWEATHER_API_KEY` - Your OpenWeatherMap API key
+     - `PORT` - Set to `10000` (Render's default)
+     - `NODE_ENV` - Set to `production`
 
-4. **Initialize Database**
-   - After deployment, run the schema:
-     ```bash
-     psql $DATABASE_URL -f backend/schema.sql
+4. **Deploy**
+   - Render will auto-deploy after saving environment variables
+   - Wait for deployment to complete (usually 2-5 minutes)
+
+#### Step 3: Configure iOS App
+
+1. **Update API URL**
+   - Open `outfiteaseFrontend/outfiteaseFrontend/Utils/Constants.swift`
+   - Update `baseURL` with your Render service URL:
+     ```swift
+     static let baseURL = "https://outfitease.onrender.com"
      ```
 
-5. **Update iOS App**
-   - Open `outfiteaseFrontend/outfiteaseFrontend/Utils/Constants.swift`
-   - Update `baseURL` with your actual Render service URL
-   - Example: `static let baseURL = "https://outfitease-backend.onrender.com"`
+2. **Build and Run**
+   - Open the project in Xcode
+   - Build and run on simulator or device
 
-#### Render Configuration Files
-- **`render.yaml`**: Render Blueprint configuration (auto-deploys web service + database)
-- **`backend/RENDER_DEPLOYMENT.md`**: Complete deployment documentation
+#### Important Notes
+
+- **Supabase Connection Pooler**: Always use **Session mode** (port 6543) for better reliability
+- **Render Free Tier**: Services spin down after 15 minutes of inactivity (first request may take 50-60 seconds)
+- **Database Schema**: Must be run in Supabase SQL Editor before the app can work
+- **Environment Variables**: Never commit `.env` files to git
+
+#### Configuration Files
+- **`backend/schema.sql`**: Database schema to run in Supabase
+- **`backend/RENDER_DEPLOYMENT.md`**: Additional deployment details
+- **`SETUP_SUPABASE.md`**: Supabase setup guide
 
 ## Configuration
 
-### Render Environment Variables
+### Environment Variables
 
-Configure these in your Render dashboard:
+Configure these in your Render dashboard (Environment tab):
 
-- `DATABASE_URL` - Automatically provided by Render PostgreSQL service
-- `JWT_SECRET` - Auto-generated by Render (or set manually)
-- `CLOUDINARY_CLOUD_NAME` - Your Cloudinary cloud name
-- `CLOUDINARY_API_KEY` - Your Cloudinary API key
-- `CLOUDINARY_API_SECRET` - Your Cloudinary API secret
-- `OPENWEATHER_API_KEY` - Your OpenWeatherMap API key
-- `PORT` - Automatically set to 10000 by Render
-- `NODE_ENV` - Set to production by Render
+| Variable | Description | Source |
+|----------|-------------|--------|
+| `DATABASE_URL` | Supabase connection string (Session pooler, port 6543) | Supabase Dashboard → Settings → Database → Connection pooling |
+| `JWT_SECRET` | Secret key for JWT token signing (32+ characters) | Generate: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
+| `CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name | Cloudinary Dashboard |
+| `CLOUDINARY_API_KEY` | Your Cloudinary API key | Cloudinary Dashboard |
+| `CLOUDINARY_API_SECRET` | Your Cloudinary API secret | Cloudinary Dashboard |
+| `OPENWEATHER_API_KEY` | Your OpenWeatherMap API key | OpenWeatherMap API |
+| `PORT` | Server port (set to 10000) | Render default |
+| `NODE_ENV` | Environment (set to production) | `production` |
+
+**Important**: The `DATABASE_URL` must use Supabase's Session pooler (port 6543) for reliable connections.
 
 ### iOS Configuration
 - Add location usage description in `Info.plist`
@@ -295,9 +341,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- OpenWeatherMap for weather data
-- Cloudinary for image storage
-- PostgreSQL for robust database management
+- **Render** - Backend hosting platform
+- **Supabase** - PostgreSQL database hosting with connection pooling
+- **OpenWeatherMap** - Weather data API
+- **Cloudinary** - Image storage and CDN
 - The fashion community for inspiration
 
 ## Support

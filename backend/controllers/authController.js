@@ -122,18 +122,12 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   console.log('🔐 Login request received');
-  console.log('📧 Headers:', req.headers);
-  console.log('📦 Body:', req.body);
-  console.log('🔗 URL:', req.url);
-  console.log('📋 Method:', req.method);
   
   const { email, password } = req.body;
 
   // Validate required fields
   if (!email || !password) {
     console.log('❌ Missing email or password');
-    console.log('📧 Email:', email);
-    console.log('🔒 Password:', password ? '[PRESENT]' : '[MISSING]');
     return res.status(400).json({ message: 'Email and password are required' });
   }
 
@@ -157,7 +151,6 @@ const loginUser = async (req, res) => {
     
     while (retries > 0) {
       try {
-        console.log(`🔍 Attempting database query (${4 - retries}/3)...`);
         userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         dbError = null;
         break; // Success!
@@ -189,8 +182,6 @@ const loginUser = async (req, res) => {
       });
     }
     
-    console.log(`🔍 Query took ${Date.now() - startTime}ms`);
-    console.log('🔍 User found:', userResult.rows.length > 0);
     if (userResult.rows.length === 0) {
       console.log('❌ User not found');
       return res.status(400).json({ message: 'Invalid credentials' });
