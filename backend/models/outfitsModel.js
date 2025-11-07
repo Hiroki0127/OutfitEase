@@ -141,37 +141,69 @@ exports.updateOutfit = async (
       clothingItemIds
     });
 
+    // Build dynamic update query - only update fields that are provided
+    const updates = [];
+    const values = [];
+    let paramIndex = 1;
+
+    if (name !== undefined) {
+      updates.push(`name = $${paramIndex++}`);
+      values.push(name);
+    }
+    if (description !== undefined) {
+      updates.push(`description = $${paramIndex++}`);
+      values.push(description);
+    }
+    if (totalPrice !== undefined) {
+      updates.push(`total_price = $${paramIndex++}`);
+      values.push(totalPrice);
+    }
+    if (imageURL !== undefined) {
+      updates.push(`image_url = $${paramIndex++}`);
+      values.push(imageURL);
+    }
+    if (style !== undefined) {
+      updates.push(`style = $${paramIndex++}`);
+      values.push(style);
+    }
+    if (color !== undefined) {
+      updates.push(`color = $${paramIndex++}`);
+      values.push(color);
+    }
+    if (brand !== undefined) {
+      updates.push(`brand = $${paramIndex++}`);
+      values.push(brand);
+    }
+    if (season !== undefined) {
+      updates.push(`season = $${paramIndex++}`);
+      values.push(season);
+    }
+    if (occasion !== undefined) {
+      updates.push(`occasion = $${paramIndex++}`);
+      values.push(occasion);
+    }
+
+    if (updates.length === 0) {
+      // No fields to update, just return the existing outfit
+      await client.query('ROLLBACK');
+      client.release();
+      return await exports.getOutfitById(outfitId, userId);
+    }
+
+    // Add WHERE clause parameters
+    values.push(outfitId, userId);
+
     const updateQuery = `
       UPDATE outfits
-      SET
-        name = COALESCE($1, name),
-        description = COALESCE($2, description),
-        total_price = COALESCE($3, total_price),
-        image_url = COALESCE($4, image_url),
-        style = COALESCE($5, style),
-        color = COALESCE($6, color),
-        brand = COALESCE($7, brand),
-        season = COALESCE($8, season),
-        occasion = COALESCE($9, occasion)
-      WHERE id = $10 AND user_id = $11
+      SET ${updates.join(', ')}
+      WHERE id = $${paramIndex++} AND user_id = $${paramIndex}
       RETURNING *;
     `;
 
-    const updateValues = [
-      name,
-      description,
-      totalPrice,
-      imageURL,
-      style,
-      color,
-      brand,
-      season,
-      occasion,
-      outfitId,
-      userId
-    ];
-
-    const result = await client.query(updateQuery, updateValues);
+    console.log('📝 Update query:', updateQuery);
+    console.log('📝 Update values:', values);
+    
+    const result = await client.query(updateQuery, values);
 
     if (result.rows.length === 0) {
       await client.query('ROLLBACK');
