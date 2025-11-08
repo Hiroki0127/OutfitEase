@@ -10,9 +10,15 @@ if (!databaseUrl) {
 const usingPgBouncer = databaseUrl?.includes('pgbouncer=true');
 const isSupabase = databaseUrl?.includes('supabase.co');
 
+const sslConfig = isSupabase ? { rejectUnauthorized: false } : false;
+if (isSupabase && sslConfig) {
+  sslConfig.rejectUnauthorized = false;
+  sslConfig.require = true;
+}
+
 const pool = new Pool({
   connectionString: databaseUrl,
-  ssl: isSupabase ? { rejectUnauthorized: false } : false,
+  ssl: sslConfig,
   connectionTimeoutMillis: 30000,
   idleTimeoutMillis: 60000,
   max: 5,
