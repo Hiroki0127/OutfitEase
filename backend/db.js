@@ -11,8 +11,14 @@ const usingPgBouncer = databaseUrl?.includes('pgbouncer=true');
 const isSupabase = databaseUrl?.includes('supabase.co');
 const sslMode = new URL(databaseUrl || 'postgres://localhost').searchParams.get('sslmode');
 
-const handledInUrl = isSupabase && sslMode === 'require';
-const sslConfig = handledInUrl ? undefined : (isSupabase ? { rejectUnauthorized: false, require: true } : false);
+let sslConfig = false;
+if (isSupabase) {
+  sslConfig = {
+    rejectUnauthorized: false,
+    requestCert: true,
+    require: true
+  };
+}
 
 const pool = new Pool({
   connectionString: databaseUrl,
