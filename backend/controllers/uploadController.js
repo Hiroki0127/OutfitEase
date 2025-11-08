@@ -28,7 +28,18 @@ exports.uploadImage = async (req, res) => {
     res.json({ image_url: result.secure_url });
   } catch (err) {
     console.error('❌ Upload error:', err);
-    res.status(500).json({ error: 'Image upload failed' });
+    console.error('Error details:', {
+      message: err.message,
+      stack: err.stack,
+      name: err.name,
+      code: err.code,
+      http_code: err.http_code,
+      response: err.response?.body
+    });
+    res.status(500).json({ 
+      error: 'Image upload failed',
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 };
 
