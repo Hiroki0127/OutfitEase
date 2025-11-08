@@ -74,7 +74,8 @@ CREATE TABLE IF NOT EXISTS outfit_planning (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES users(id),
   outfit_id UUID REFERENCES outfits(id),
-  planned_date DATE
+  planned_date DATE,
+  title TEXT
 );
 
 -- POSTS table (community sharing)
