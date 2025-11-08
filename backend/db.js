@@ -14,6 +14,7 @@ const sslConfig = isSupabase ? { rejectUnauthorized: false } : false;
 if (isSupabase && sslConfig) {
   sslConfig.rejectUnauthorized = false;
   sslConfig.require = true;
+  sslConfig.sslmode = 'require';
 }
 
 const pool = new Pool({
