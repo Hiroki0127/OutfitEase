@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "femaleWinterLook.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "femaleWinterLook.jpg",
       "idiom" : "universal",
       "scale" : "2x"
     },
