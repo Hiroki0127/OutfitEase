@@ -1,6 +1,8 @@
 const { Pool } = require('pg');
 const dns = require('dns');
 const { promisify } = require('util');
+const { execSync } = require('child_process');
+const net = require('net');
 require('dotenv').config();
 
 // Force IPv4 DNS resolution to avoid IPv6 issues
@@ -53,15 +55,24 @@ if (databaseUrl) {
       poolConfig.family = 4; // Force IPv4 connections
       console.log('🌐 Supabase detected - forcing IPv4 for database connections');
 
-      // Attempt to resolve the hostname to IPv4 ahead of time for reliability
-      dnsLookup(url.hostname, { family: 4 }, (err, address) => {
-        if (err) {
-          console.warn(`⚠️  Could not resolve ${url.hostname} to IPv4:`, err.message);
+      // Attempt to resolve the hostname to IPv4 synchronously for reliability
+      try {
+        const output = execSync(`getent hosts ${url.hostname}`, { encoding: 'utf8' }).trim();
+        const ipv4 = output
+          .split('\n')
+          .map(line => line.trim().split(/\s+/)[0])
+          .find(addr => net.isIP(addr) === 4);
+
+        if (ipv4) {
+          console.log(`🌐 Resolved ${url.hostname} to IPv4: ${ipv4}`);
+          poolConfig.host = ipv4;
+          poolConfig.hostaddr = ipv4;
         } else {
-          console.log(`🌐 Resolved ${url.hostname} to IPv4: ${address}`);
-          poolConfig.host = address;
+          console.warn(`⚠️  Could not find IPv4 address for ${url.hostname} via getent`);
         }
-      });
+      } catch (resolutionError) {
+        console.warn(`⚠️  getent lookup failed for ${url.hostname}:`, resolutionError.message);
+      }
     } else {
       // For non-Supabase connection strings fall back to using the original URL
       poolConfig.connectionString = databaseUrl;
