@@ -1,124 +1,45 @@
 const { Pool } = require('pg');
-const dns = require('dns');
-const { promisify } = require('util');
-const { execSync } = require('child_process');
-const net = require('net');
 require('dotenv').config();
 
-// Force IPv4 DNS resolution to avoid IPv6 issues
-dns.setDefaultResultOrder('ipv4first');
-const dnsLookup = promisify(dns.lookup);
-
-// Database connection configuration
-const isRender = process.env.DATABASE_URL?.includes('render.com') || 
-                 process.env.DATABASE_URL?.includes('onrender.com') ||
-                 process.env.RENDER;
-
-const isSupabase = process.env.DATABASE_URL?.includes('supabase.co');
-
-// Use internal database URL if available (better for Render)
 const databaseUrl = process.env.DATABASE_URL || process.env.INTERNAL_DATABASE_URL;
 
-// Base pool configuration
-const poolConfig = {
-  // Increased timeouts for free tier databases
-  connectionTimeoutMillis: 30000, // 30 seconds to connect
-  idleTimeoutMillis: 60000, // Close idle clients after 60 seconds (increased)
-  max: 5, // Connection pool size
-  // SSL configuration
-  ssl: isSupabase || isRender ? {
-    require: true,
-    rejectUnauthorized: false // Supabase and Render use self-signed certificates
-  } : false,
-  // Allow connection to be kept alive
+if (!databaseUrl) {
+  console.warn('⚠️ DATABASE_URL is not defined. Database connections will fail.');
+}
+
+const usingPgBouncer = databaseUrl?.includes('pgbouncer=true');
+const isSupabase = databaseUrl?.includes('supabase.co');
+
+const pool = new Pool({
+  connectionString: databaseUrl,
+  ssl: isSupabase ? { rejectUnauthorized: false } : false,
+  connectionTimeoutMillis: 30000,
+  idleTimeoutMillis: 60000,
+  max: 5,
   keepAlive: true,
   keepAliveInitialDelayMillis: 10000
-};
-
-if (databaseUrl) {
-  try {
-    const url = new URL(databaseUrl);
-    const decodedUser = decodeURIComponent(url.username ?? '');
-    const decodedPassword = decodeURIComponent(url.password ?? '');
-    const databaseName = url.pathname ? url.pathname.replace(/^\//, '') : undefined;
-
-    // Populate poolConfig with explicit properties so we can force IPv4 where needed
-    Object.assign(poolConfig, {
-      user: decodedUser || undefined,
-      password: decodedPassword || undefined,
-      database: databaseName || undefined,
-      port: parseInt(url.port, 10) || 5432,
-      host: url.hostname || undefined
-    });
-
-    if (isSupabase) {
-      poolConfig.family = 4; // Force IPv4 connections
-      console.log('🌐 Supabase detected - forcing IPv4 for database connections');
-
-      // Attempt to resolve the hostname to IPv4 synchronously for reliability
-      try {
-        const output = execSync(`getent hosts ${url.hostname}`, { encoding: 'utf8' }).trim();
-        const ipv4 = output
-          .split('\n')
-          .map(line => line.trim().split(/\s+/)[0])
-          .find(addr => net.isIP(addr) === 4);
-
-        if (ipv4) {
-          console.log(`🌐 Resolved ${url.hostname} to IPv4: ${ipv4}`);
-          poolConfig.host = ipv4;
-          poolConfig.hostaddr = ipv4;
-        } else {
-          console.warn(`⚠️  Could not find IPv4 address for ${url.hostname} via getent`);
-        }
-      } catch (resolutionError) {
-        console.warn(`⚠️  getent lookup failed for ${url.hostname}:`, resolutionError.message);
-      }
-    } else {
-      // For non-Supabase connection strings fall back to using the original URL
-      poolConfig.connectionString = databaseUrl;
-    }
-  } catch (error) {
-    console.error('❌ Failed to parse DATABASE_URL:', error.message);
-    poolConfig.connectionString = databaseUrl;
-  }
-} else {
-  console.warn('⚠️ DATABASE_URL is not defined');
-}
+});
 
 console.log('🔌 Initializing database pool...');
-if (databaseUrl) {
-  try {
-    const url = new URL(databaseUrl);
-    console.log('📊 Connection string details:', {
-      host: url.hostname,
-      port: url.port || 'default',
-      user: url.username,
-      database: url.pathname,
-      hasPassword: !!url.password,
-      isPooler: url.hostname.includes('pooler'),
-      isSessionPooler: url.port === '6543'
-    });
-  } catch (e) {
-    console.warn('⚠️  Could not parse connection string');
-  }
-}
-console.log('📊 Pool config:', {
-  hasConnectionString: !!process.env.DATABASE_URL,
-  connectionTimeout: poolConfig.connectionTimeoutMillis,
-  maxClients: poolConfig.max,
-  sslEnabled: !!poolConfig.ssl,
-  isSupabase: isSupabase,
-  isRender: isRender,
-  databaseHost: databaseUrl ? (() => {
+console.log('📊 Connection string details:', {
+  host: (() => {
     try {
-      return new URL(databaseUrl).hostname;
+      return databaseUrl ? new URL(databaseUrl).hostname : 'unknown';
     } catch {
       return 'unknown';
     }
-  })() : 'none'
+  })(),
+  port: (() => {
+    try {
+      return databaseUrl ? new URL(databaseUrl).port || 'default' : 'unknown';
+    } catch {
+      return 'unknown';
+    }
+  })(),
+  usingPgBouncer,
+  sslEnabled: !!(isSupabase),
+  isSupabase
 });
-
-const pool = new Pool(poolConfig);
 
 // Test connection on startup (non-blocking)
 setTimeout(() => {
