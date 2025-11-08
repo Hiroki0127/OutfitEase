@@ -7,22 +7,11 @@ if (!databaseUrl) {
   console.warn('⚠️ DATABASE_URL is not defined. Database connections will fail.');
 }
 
-const usingPgBouncer = databaseUrl?.includes('pgbouncer=true');
-const isSupabase = databaseUrl?.includes('supabase.co');
-const sslMode = new URL(databaseUrl || 'postgres://localhost').searchParams.get('sslmode');
-
-let sslConfig = false;
-if (isSupabase) {
-  sslConfig = {
-    rejectUnauthorized: false,
-    requestCert: true,
-    require: true
-  };
-}
-
 const pool = new Pool({
   connectionString: databaseUrl,
-  ssl: sslConfig,
+  ssl: databaseUrl && new URL(databaseUrl).hostname.includes('supabase.co')
+    ? { rejectUnauthorized: false }
+    : false,
   connectionTimeoutMillis: 30000,
   idleTimeoutMillis: 60000,
   max: 5,
@@ -46,10 +35,7 @@ console.log('📊 Connection string details:', {
       return 'unknown';
     }
   })(),
-  usingPgBouncer,
-  sslEnabled: sslMode === 'require' || !!sslConfig,
-  isSupabase,
-  sslHandledByUrl: handledInUrl
+  sslEnabled: databaseUrl ? new URL(databaseUrl).hostname.includes('supabase.co') : false
 });
 
 // Test connection on startup (non-blocking)
