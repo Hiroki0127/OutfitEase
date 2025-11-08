@@ -9,13 +9,10 @@ if (!databaseUrl) {
 
 const usingPgBouncer = databaseUrl?.includes('pgbouncer=true');
 const isSupabase = databaseUrl?.includes('supabase.co');
+const sslMode = new URL(databaseUrl || 'postgres://localhost').searchParams.get('sslmode');
 
-const sslConfig = isSupabase ? { rejectUnauthorized: false } : false;
-if (isSupabase && sslConfig) {
-  sslConfig.rejectUnauthorized = false;
-  sslConfig.require = true;
-  sslConfig.sslmode = 'require';
-}
+const handledInUrl = isSupabase && sslMode === 'require';
+const sslConfig = handledInUrl ? undefined : (isSupabase ? { rejectUnauthorized: false, require: true } : false);
 
 const pool = new Pool({
   connectionString: databaseUrl,
@@ -44,8 +41,9 @@ console.log('📊 Connection string details:', {
     }
   })(),
   usingPgBouncer,
-  sslEnabled: !!(isSupabase),
-  isSupabase
+  sslEnabled: sslMode === 'require' || !!sslConfig,
+  isSupabase,
+  sslHandledByUrl: handledInUrl
 });
 
 // Test connection on startup (non-blocking)
