@@ -95,7 +95,7 @@ struct ProfileView: View {
                             .buttonStyle(PlainButtonStyle())
                             .scaleEffect(0.98)
                             
-                            NavigationLink(destination: PostFeedView()) {
+                            NavigationLink(destination: MyPostsView()) {
                                 StatCard(title: "Posts", value: "\(postViewModel.posts.count)", icon: "photo.stack.fill")
                             }
                             .buttonStyle(PlainButtonStyle())
