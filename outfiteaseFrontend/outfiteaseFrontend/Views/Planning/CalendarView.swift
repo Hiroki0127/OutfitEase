@@ -21,26 +21,15 @@ struct CalendarView: View {
             
             // Handle both ISO date format and simple date format
             if planDate.contains("T") {
-                // ISO date format: "2025-08-22T04:00:00.000Z"
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-                dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
-                
-                if let date = dateFormatter.date(from: planDate) {
-                    let planDateString = formatter.string(from: date)
-                    let matches = planDateString == selectedDateString
-                    print("📅 Comparing: \(planDateString) == \(selectedDateString) = \(matches)")
-                    return matches
-                } else {
-                    print("❌ Failed to parse ISO date: \(planDate)")
-                }
-            } else {
-                // Simple date format: "2025-08-22"
-                let matches = planDate == selectedDateString
-                print("📅 Comparing: \(planDate) == \(selectedDateString) = \(matches)")
+                let planDateString = String(planDate.prefix(10))
+                let matches = planDateString == selectedDateString
+                print("📅 Comparing ISO: \(planDateString) == \(selectedDateString) = \(matches)")
                 return matches
             }
-            return false
+            
+            let matches = planDate == selectedDateString
+            print("📅 Comparing simple: \(planDate) == \(selectedDateString) = \(matches)")
+            return matches
         }
         
         print("📅 Total plans available: \(planningViewModel.outfitPlans.count)")
@@ -293,19 +282,10 @@ struct CalendarGridView: View {
 
         return planningViewModel.outfitPlans.contains { plan in
             let planDate = plan.plannedDate
-
             if planDate.contains("T") {
-                let isoFormatter = DateFormatter()
-                isoFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-                isoFormatter.timeZone = TimeZone(abbreviation: "UTC")
-
-                if let parsedDate = isoFormatter.date(from: planDate) {
-                    return formatter.string(from: parsedDate) == dateString
-                }
-                return false
-            } else {
-                return planDate == dateString
+                return String(planDate.prefix(10)) == dateString
             }
+            return planDate == dateString
         }
     }
 }
