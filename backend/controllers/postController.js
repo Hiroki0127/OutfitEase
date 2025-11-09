@@ -68,10 +68,7 @@ exports.getAllPosts = async (req, res) => {
     const transformedPosts = posts.map(post => {
       const transformedPost = { ...post };
       
-      // Set image_url from outfit if it exists (posts table doesn't have image_url)
-      if (post.image_url && !transformedPost.image_url) {
-        transformedPost.image_url = post.image_url;
-      }
+      transformedPost.avatar_url = post.avatar_url;
       
       // Create outfit object if outfit_id exists
       if (post.outfit_id) {
@@ -94,16 +91,6 @@ exports.getAllPosts = async (req, res) => {
         transformedPost.outfit = null;
       }
       
-      // Remove individual outfit fields to avoid duplication
-      delete transformedPost.outfit_name;
-      delete transformedPost.outfit_description;
-      delete transformedPost.outfit_total_price;
-      delete transformedPost.outfit_style;
-      delete transformedPost.outfit_color;
-      delete transformedPost.outfit_brand;
-      delete transformedPost.outfit_season;
-      delete transformedPost.outfit_occasion;
-      delete transformedPost.outfit_created_at;
       
       return transformedPost;
     });
