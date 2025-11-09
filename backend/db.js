@@ -7,11 +7,23 @@ if (!databaseUrl) {
   console.warn('⚠️ DATABASE_URL is not defined. Database connections will fail.');
 }
 
+let sslOption = false;
+let hostname = 'unknown';
+
+try {
+  hostname = databaseUrl ? new URL(databaseUrl).hostname : 'unknown';
+} catch {
+  hostname = 'unknown';
+}
+
+if (hostname.includes('supabase.co')) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  sslOption = { rejectUnauthorized: false };
+}
+
 const pool = new Pool({
   connectionString: databaseUrl,
-  ssl: databaseUrl && new URL(databaseUrl).hostname.includes('supabase.co')
-    ? { rejectUnauthorized: false }
-    : false,
+  ssl: sslOption,
   connectionTimeoutMillis: 30000,
   idleTimeoutMillis: 60000,
   max: 5,
@@ -20,22 +32,17 @@ const pool = new Pool({
 });
 
 console.log('🔌 Initializing database pool...');
+let port = 'default';
+try {
+  port = databaseUrl ? new URL(databaseUrl).port || 'default' : 'unknown';
+} catch {
+  port = 'unknown';
+}
+
 console.log('📊 Connection string details:', {
-  host: (() => {
-    try {
-      return databaseUrl ? new URL(databaseUrl).hostname : 'unknown';
-    } catch {
-      return 'unknown';
-    }
-  })(),
-  port: (() => {
-    try {
-      return databaseUrl ? new URL(databaseUrl).port || 'default' : 'unknown';
-    } catch {
-      return 'unknown';
-    }
-  })(),
-  sslEnabled: databaseUrl ? new URL(databaseUrl).hostname.includes('supabase.co') : false
+  host: hostname,
+  port,
+  sslEnabled: !!sslOption
 });
 
 // Test connection on startup (non-blocking)
