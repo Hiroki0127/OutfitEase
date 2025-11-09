@@ -84,16 +84,6 @@ class AuthViewModel: ObservableObject {
         currentUser = nil
     }
     
-    // MARK: - Testing Helper
-    func resetForTesting() {
-        UserDefaults.standard.removeObject(forKey: Constants.UserDefaults.authToken)
-        UserDefaults.standard.removeObject(forKey: Constants.UserDefaults.currentUser)
-        UserDefaults.standard.set(false, forKey: Constants.UserDefaults.isLoggedIn)
-        isLoggedIn = false
-        currentUser = nil
-        errorMessage = nil
-    }
-    
     // MARK: - Mock Login for Testing
     func mockLogin(email: String, password: String) async {
         print("🔐 Mock login started")

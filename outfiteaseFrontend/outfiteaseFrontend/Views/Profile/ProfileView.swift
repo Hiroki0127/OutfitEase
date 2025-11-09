@@ -149,13 +149,6 @@ struct ProfileView: View {
                             }) {
                                 QuickActionRow(title: "Sign Out", icon: "rectangle.portrait.and.arrow.right", color: .red)
                             }
-                            
-                            // Testing Helper Button
-                            Button(action: {
-                                authViewModel.resetForTesting()
-                            }) {
-                                QuickActionRow(title: "Reset for Testing", icon: "arrow.clockwise.circle.fill", color: .purple)
-                            }
                         }
                     }
                     .padding(.horizontal)
