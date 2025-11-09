@@ -290,8 +290,22 @@ struct CalendarGridView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         let dateString = formatter.string(from: date)
+
         return planningViewModel.outfitPlans.contains { plan in
-            plan.plannedDate == dateString
+            let planDate = plan.plannedDate
+
+            if planDate.contains("T") {
+                let isoFormatter = DateFormatter()
+                isoFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+                isoFormatter.timeZone = TimeZone(abbreviation: "UTC")
+
+                if let parsedDate = isoFormatter.date(from: planDate) {
+                    return formatter.string(from: parsedDate) == dateString
+                }
+                return false
+            } else {
+                return planDate == dateString
+            }
         }
     }
 }
