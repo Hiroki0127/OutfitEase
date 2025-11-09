@@ -183,8 +183,18 @@ async function updatePost(id, caption, image_url, description) {
 
 
 
-async function deletePost(id) {
-  const res = await db.query('DELETE FROM posts WHERE id = $1 RETURNING *', [id]);
+async function deletePost(id, userId = null) {
+  let query = 'DELETE FROM posts WHERE id = $1';
+  const params = [id];
+
+  if (userId) {
+    query += ' AND user_id = $2';
+    params.push(userId);
+  }
+
+  query += ' RETURNING *';
+
+  const res = await db.query(query, params);
   return res.rows.length > 0;
 }
 

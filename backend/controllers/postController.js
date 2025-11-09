@@ -231,12 +231,22 @@ exports.updatePost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
   const { id } = req.params;
+  const userId = req.user.userId;
+  const userRole = req.user.role;
+  const isAdmin = userRole === 'admin' || userRole === 'moderator';
 
   try {
-    const deleted = await postModel.deletePost(id);
-    if (!deleted) return res.status(404).json({ error: 'Post not found' });
+    const deleted = await postModel.deletePost(id, isAdmin ? null : userId);
+    if (!deleted) {
+      if (isAdmin) {
+        return res.status(404).json({ error: 'Post not found' });
+      }
+      return res.status(403).json({ error: 'You are not authorized to delete this post' });
+    }
+
     res.json({ message: 'Post deleted' });
   } catch (err) {
+    console.error('Error deleting post:', err);
     res.status(500).json({ error: 'Failed to delete post' });
   }
 };

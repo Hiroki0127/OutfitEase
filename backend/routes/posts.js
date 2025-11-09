@@ -11,7 +11,7 @@ router.get('/user', authenticateToken, postController.getPostsByUser);//get curr
 router.get('/:id', postController.getPostById);//public so no auth so pepole can see it
 router.put('/:id', authenticateToken, postController.updatePost);
 
-router.delete('/:id', authorizeRoles('admin', 'moderator'), postController.deletePost);
+router.delete('/:id', postController.deletePost);
 
 //router.delete('/:id', authorizeRoles('admin', 'moderator'), postController.deletePost);
 

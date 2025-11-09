@@ -2,6 +2,8 @@ import SwiftUI
 
 struct PostCardView: View {
     let post: Post
+    let canDelete: Bool
+    let onDelete: (() async -> Void)?
     @StateObject private var commentViewModel = CommentViewModel()
     @State private var showComments = false
     @State private var showPostDetail = false
@@ -11,12 +13,15 @@ struct PostCardView: View {
     @State private var isLiking = false
     @State private var showShareSheet = false
     @State private var isSavingOutfit = false
-
+    @State private var showDeleteConfirmation = false
+    @State private var isDeleting = false
     @State private var isOutfitSaved = false
     @State private var hasCheckedSavedStatus = false
     
-    init(post: Post) {
+    init(post: Post, canDelete: Bool = false, onDelete: (() async -> Void)? = nil) {
         self.post = post
+        self.canDelete = canDelete
+        self.onDelete = onDelete
         self._isLiked = State(initialValue: post.isLiked)
         self._likeCount = State(initialValue: post.likeCount)
     }
@@ -45,11 +50,24 @@ struct PostCardView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    // TODO: Show more options
-                }) {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(.secondary)
+                if canDelete {
+                    Menu {
+                        Button(role: .destructive) {
+                            showDeleteConfirmation = true
+                        } label: {
+                            Label("Delete Post", systemImage: "trash")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .foregroundColor(.secondary)
+                    }
+                } else {
+                    Button(action: {
+                        // Additional options could go here
+                    }) {
+                        Image(systemName: "ellipsis")
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             
@@ -177,6 +195,17 @@ struct PostCardView: View {
             Task {
                 await checkIfOutfitIsSaved()
             }
+        }
+        .confirmationDialog("Delete this post?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
+                Task {
+                    guard !isDeleting, let onDelete else { return }
+                    isDeleting = true
+                    await onDelete()
+                    isDeleting = false
+                }
+            }
+            Button("Cancel", role: .cancel) { }
         }
     }
     

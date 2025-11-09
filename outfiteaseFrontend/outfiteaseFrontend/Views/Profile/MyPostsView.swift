@@ -28,7 +28,9 @@ struct MyPostsView: View {
                 ScrollView {
                     LazyVStack(spacing: 16) {
                         ForEach(postViewModel.posts) { post in
-                            PostCardView(post: post)
+                            PostCardView(post: post, canDelete: true) {
+                                await deletePost(post)
+                            }
                                 .padding(.horizontal)
                         }
                     }
@@ -55,6 +57,11 @@ struct MyPostsView: View {
         .refreshable {
             await postViewModel.loadUserPosts()
         }
+    }
+    
+    private func deletePost(_ post: Post) async {
+        await postViewModel.deletePost(id: post.id)
+        await postViewModel.loadUserPosts()
     }
 }
 
