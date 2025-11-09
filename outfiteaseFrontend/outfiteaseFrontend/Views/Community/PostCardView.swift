@@ -31,15 +31,21 @@ struct PostCardView: View {
             // User Info Header
             HStack {
                 AsyncImage(url: post.avatarURL.flatMap(URL.init(string:))) { phase in
-                    if let image = try? phase.get() {
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                    } else {
+                    case .failure:
                         Image(systemName: "person.fill")
                             .font(.system(size: 20))
                             .foregroundColor(.blue)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    @unknown default:
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.blue)
                     }
                 }
                 .frame(width: 40, height: 40)

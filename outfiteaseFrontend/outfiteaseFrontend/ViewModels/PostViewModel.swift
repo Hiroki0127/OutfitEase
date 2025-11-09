@@ -55,6 +55,18 @@ class PostViewModel: ObservableObject {
         let createPostRequest = CreatePostRequest(outfitId: outfit.id, caption: caption)
         let newPost = try await postService.createPost(createPostRequest)
         posts.insert(newPost, at: 0)
+        
+        // Update nearby posts (before and after this index) with avatar URL from current user
+        if let index = posts.firstIndex(where: { $0.id == newPost.id }) {
+            let currentId = newPost.userId
+            for offset in [-1, 1] {
+                let neighborIndex = index + offset
+                guard posts.indices.contains(neighborIndex) else { continue }
+                if posts[neighborIndex].userId == currentId {
+                    posts[neighborIndex].avatarURL = AuthService.shared.getCurrentUser()?.avatarUrl
+                }
+            }
+        }
     }
     
     func deletePost(id: UUID) async {
