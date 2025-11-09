@@ -30,13 +30,21 @@ struct PostCardView: View {
         VStack(alignment: .leading, spacing: 12) {
             // User Info Header
             HStack {
-                Circle()
-                    .fill(Color.blue.opacity(0.2))
-                    .frame(width: 40, height: 40)
-                    .overlay(
+                AsyncImage(url: post.avatarURL.flatMap(URL.init(string:))) { phase in
+                    if let image = try? phase.get() {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else {
                         Image(systemName: "person.fill")
+                            .font(.system(size: 20))
                             .foregroundColor(.blue)
-                    )
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+                .frame(width: 40, height: 40)
+                .background(Color.blue.opacity(0.2))
+                .clipShape(Circle())
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(post.username)
