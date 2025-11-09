@@ -3,10 +3,10 @@ const db = require('../db');
 // Define the createPost function
 async function createPost(userId, outfitId, caption, description, image_url) {
   const result = await db.query(
-    `INSERT INTO posts (user_id, outfit_id, caption)
-     VALUES ($1, $2, $3)
+    `INSERT INTO posts (user_id, outfit_id, caption, image_url)
+     VALUES ($1, $2, $3, $4)
      RETURNING *`,
-    [userId, outfitId, caption]
+    [userId, outfitId, caption, image_url]
   );
   return result.rows[0];
 }
