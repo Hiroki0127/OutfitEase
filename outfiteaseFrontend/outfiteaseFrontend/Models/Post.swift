@@ -4,7 +4,7 @@ struct Post: Identifiable, Codable {
     let id: UUID
     let userId: UUID
     let username: String
-    var avatarURL: String?
+    let avatarURL: String?
     let caption: String
     let imageURL: String?
     let createdAt: String

@@ -7,10 +7,10 @@ struct HomeView: View {
     
     var body: some View {
         TabView {
-            FeedView()
+            PostFeedView()
                 .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("Home")
+                    Image(systemName: "person.3.fill")
+                    Text("Community")
                 }
             
             ClothingListView(clothingViewModel: clothingViewModel, outfitViewModel: outfitViewModel)
@@ -21,7 +21,7 @@ struct HomeView: View {
             
             OutfitListView(outfitViewModel: outfitViewModel)
                 .tabItem {
-                    Image(systemName: "person.2.fill")
+                    Image(systemName: "hanger")
                     Text("Outfits")
                 }
             
@@ -33,8 +33,8 @@ struct HomeView: View {
             
             ProfileView(clothingViewModel: clothingViewModel, outfitViewModel: outfitViewModel, authViewModel: authViewModel)
                 .tabItem {
-                    Image(systemName: "ellipsis.circle.fill")
-                    Text("More")
+                    Image(systemName: "person.crop.circle")
+                    Text("Profile")
                 }
         }
         .accentColor(.blue)

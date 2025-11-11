@@ -30,27 +30,37 @@ struct PostCardView: View {
         VStack(alignment: .leading, spacing: 12) {
             // User Info Header
             HStack {
-                AsyncImage(url: post.avatarURL.flatMap(URL.init(string:))) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(.blue)
-                    @unknown default:
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(.blue)
+                if let urlString = post.avatarURL, let url = URL(string: urlString) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        case .failure:
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(.blue)
+                        @unknown default:
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(.blue)
+                        }
                     }
+                    .frame(width: 40, height: 40)
+                    .clipShape(Circle())
+                    .background(Color.blue.opacity(0.2))
+                } else {
+                    Circle()
+                        .fill(Color.blue.opacity(0.2))
+                        .frame(width: 40, height: 40)
+                        .overlay(
+                            Image(systemName: "person.fill")
+                                .foregroundColor(.blue)
+                        )
                 }
-                .frame(width: 40, height: 40)
-                .background(Color.blue.opacity(0.2))
-                .clipShape(Circle())
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(post.username)
@@ -76,11 +86,11 @@ struct PostCardView: View {
                             .foregroundColor(.secondary)
                     }
                 } else {
-                    Button(action: {
+                Button(action: {
                         // Additional options could go here
-                    }) {
-                        Image(systemName: "ellipsis")
-                            .foregroundColor(.secondary)
+                }) {
+                    Image(systemName: "ellipsis")
+                        .foregroundColor(.secondary)
                     }
                 }
             }
