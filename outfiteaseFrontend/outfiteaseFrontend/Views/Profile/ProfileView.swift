@@ -369,10 +369,18 @@ struct PublicProfileView: View {
                     Text(profile.isFollowing ? "Following" : "Follow")
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(profile.isFollowing ? .bordered : .borderedProminent)
-                .tint(profile.isFollowing ? .gray : .blue)
-                .disabled(viewModel.isFollowActionInProgress)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(profile.isFollowing ? Color(.systemGray5) : Color.blue)
+                    )
+                    .foregroundColor(profile.isFollowing ? .primary : .white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray.opacity(profile.isFollowing ? 0.3 : 0), lineWidth: 1)
+                    )
+            }
+            .disabled(viewModel.isFollowActionInProgress)
             }
         }
     }
