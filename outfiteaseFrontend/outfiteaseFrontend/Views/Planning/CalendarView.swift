@@ -22,7 +22,7 @@ struct CalendarView: View {
             // Handle both ISO date format and simple date format
             if planDate.contains("T") {
                 let planDateString = String(planDate.prefix(10))
-                let matches = planDateString == selectedDateString
+                    let matches = planDateString == selectedDateString
                 print("📅 Comparing ISO: \(planDateString) == \(selectedDateString) = \(matches)")
                 return matches
             }
