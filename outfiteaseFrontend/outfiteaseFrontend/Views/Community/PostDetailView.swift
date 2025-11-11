@@ -26,13 +26,37 @@ struct PostDetailView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     // User Info Header
                     HStack {
-                        Circle()
-                            .fill(Color.blue.opacity(0.2))
+                        if let urlString = post.avatarURL, let url = URL(string: urlString) {
+                            AsyncImage(url: url) { phase in
+                                switch phase {
+                                case .empty:
+                                    ProgressView()
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                case .failure:
+                                    Image(systemName: "person.fill")
+                                        .font(.system(size: 24))
+                                        .foregroundColor(.blue)
+                                @unknown default:
+                                    Image(systemName: "person.fill")
+                                        .font(.system(size: 24))
+                                        .foregroundColor(.blue)
+                                }
+                            }
                             .frame(width: 50, height: 50)
-                            .overlay(
-                                Image(systemName: "person.fill")
-                                    .foregroundColor(.blue)
-                            )
+                            .clipShape(Circle())
+                            .background(Color.blue.opacity(0.2))
+                        } else {
+                            Circle()
+                                .fill(Color.blue.opacity(0.2))
+                                .frame(width: 50, height: 50)
+                                .overlay(
+                                    Image(systemName: "person.fill")
+                                        .foregroundColor(.blue)
+                                )
+                        }
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text(post.username)
