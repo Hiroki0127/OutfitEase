@@ -47,7 +47,6 @@ struct PostDetailView: View {
                             }
                             .frame(width: 50, height: 50)
                             .clipShape(Circle())
-                            .background(Color.blue.opacity(0.2))
                         } else {
                             Circle()
                                 .fill(Color.blue.opacity(0.2))

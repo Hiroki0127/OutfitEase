@@ -51,7 +51,6 @@ struct PostCardView: View {
                     }
                     .frame(width: 40, height: 40)
                     .clipShape(Circle())
-                    .background(Color.blue.opacity(0.2))
                 } else {
                     Circle()
                         .fill(Color.blue.opacity(0.2))
