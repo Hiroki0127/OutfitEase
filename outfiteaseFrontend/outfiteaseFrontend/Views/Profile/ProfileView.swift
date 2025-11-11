@@ -283,6 +283,7 @@ struct PublicProfileView: View {
     let userId: String
     @StateObject private var viewModel = PublicProfileViewModel()
     @State private var hasLoaded = false
+    @State private var followListType: FollowListType?
     
     var body: some View {
         Group {
@@ -334,6 +335,15 @@ struct PublicProfileView: View {
             guard !hasLoaded else { return }
             hasLoaded = true
             await viewModel.loadProfile(userId: userId)
+        }
+        .sheet(item: $followListType) { type in
+            if let profile = viewModel.profile {
+                NavigationView {
+                    FollowListView(type: type, userId: profile.user.id, currentUsername: profile.user.username)
+                }
+            } else {
+                Text("Profile unavailable")
+            }
         }
     }
     
@@ -408,8 +418,21 @@ struct PublicProfileView: View {
             }
             
             HStack(spacing: 20) {
-                StatCard(title: "Followers", value: "\(profile.stats.followerCount)", icon: "person.2.fill")
-                StatCard(title: "Following", value: "\(profile.stats.followingCount)", icon: "person.2.wave.2.fill")
+                Button {
+                    followListType = .followers
+                } label: {
+                    StatCard(title: "Followers", value: "\(profile.stats.followerCount)", icon: "person.2.fill")
+                }
+                .buttonStyle(PlainButtonStyle())
+                .scaleEffect(0.98)
+                
+                Button {
+                    followListType = .following
+                } label: {
+                    StatCard(title: "Following", value: "\(profile.stats.followingCount)", icon: "person.2.wave.2.fill")
+                }
+                .buttonStyle(PlainButtonStyle())
+                .scaleEffect(0.98)
             }
         }
     }

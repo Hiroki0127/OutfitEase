@@ -177,6 +177,10 @@ enum FollowListType {
     }
 }
 
+extension FollowListType: Identifiable {
+    var id: String { title }
+}
+
 @MainActor
 class FollowListViewModel: ObservableObject {
     @Published var users: [FollowListUser] = []
