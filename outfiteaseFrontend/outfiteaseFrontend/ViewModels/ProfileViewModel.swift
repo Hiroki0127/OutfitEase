@@ -157,3 +157,51 @@ class PublicProfileViewModel: ObservableObject {
         isFollowActionInProgress = false
     }
 }
+
+enum FollowListType {
+    case followers
+    case following
+    
+    var title: String {
+        switch self {
+        case .followers: return "Followers"
+        case .following: return "Following"
+        }
+    }
+    
+    var emptyMessage: String {
+        switch self {
+        case .followers: return "No followers yet"
+        case .following: return "Not following anyone yet"
+        }
+    }
+}
+
+@MainActor
+class FollowListViewModel: ObservableObject {
+    @Published var users: [FollowListUser] = []
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    
+    private let userService = UserService.shared
+    
+    func load(type: FollowListType, userId: String) async {
+        guard !userId.isEmpty else { return }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            switch type {
+            case .followers:
+                users = try await userService.getFollowers(userId: userId)
+            case .following:
+                users = try await userService.getFollowing(userId: userId)
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
+    }
+}

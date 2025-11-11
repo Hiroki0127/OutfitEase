@@ -102,9 +102,23 @@ struct ProfileView: View {
                         }
                         
                         HStack(spacing: 20) {
-                            StatCard(title: "Followers", value: "\(profileViewModel.followerCount)", icon: "person.2.fill")
+                            if let userId = profileViewModel.currentUser?.id {
+                                NavigationLink(destination: FollowListView(type: .followers, userId: userId, currentUsername: profileViewModel.currentUser?.username ?? "You")) {
+                                    StatCard(title: "Followers", value: "\(profileViewModel.followerCount)", icon: "person.2.fill")
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .scaleEffect(0.98)
+                                
+                                NavigationLink(destination: FollowListView(type: .following, userId: userId, currentUsername: profileViewModel.currentUser?.username ?? "You")) {
+                                    StatCard(title: "Following", value: "\(profileViewModel.followingCount)", icon: "person.2.wave.2.fill")
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .scaleEffect(0.98)
+                            } else {
+                                StatCard(title: "Followers", value: "\(profileViewModel.followerCount)", icon: "person.2.fill")
+                                StatCard(title: "Following", value: "\(profileViewModel.followingCount)", icon: "person.2.wave.2.fill")
+                            }
                             
-                            StatCard(title: "Following", value: "\(profileViewModel.followingCount)", icon: "person.2.wave.2.fill")
                         }
                     }
                     .padding(.horizontal)
@@ -438,6 +452,123 @@ struct PublicProfileView: View {
                     .font(.system(size: 40))
                     .foregroundColor(.blue)
             )
+    }
+    
+    private func formattedDate(_ dateString: String) -> String {
+        let formatter = ISO8601DateFormatter()
+        if let date = formatter.date(from: dateString) {
+            let displayFormatter = DateFormatter()
+            displayFormatter.dateStyle = .medium
+            return displayFormatter.string(from: date)
+        }
+        return dateString.prefix(10).description
+    }
+}
+
+struct FollowListView: View {
+    let type: FollowListType
+    let userId: String
+    let currentUsername: String
+    
+    @StateObject private var viewModel = FollowListViewModel()
+    @State private var selectedUser: FollowListUser?
+    
+    var body: some View {
+        Group {
+            if viewModel.isLoading && viewModel.users.isEmpty {
+                ProgressView("Loading \(type.title.lowercased())...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            } else if let errorMessage = viewModel.errorMessage {
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.orange)
+                    Text(errorMessage)
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            } else if viewModel.users.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "person.2.circle")
+                        .font(.system(size: 50))
+                        .foregroundColor(.gray.opacity(0.6))
+                    Text(type.emptyMessage)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            } else {
+                List(viewModel.users) { user in
+                    Button {
+                        selectedUser = user
+                    } label: {
+                        HStack(spacing: 12) {
+                            if let avatarUrl = user.avatarUrl, let url = URL(string: avatarUrl) {
+                                AsyncImage(url: url) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView()
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                    case .failure:
+                                        Image(systemName: "person.fill")
+                                            .foregroundColor(.blue)
+                                    @unknown default:
+                                        Image(systemName: "person.fill")
+                                            .foregroundColor(.blue)
+                                    }
+                                }
+                                .frame(width: 44, height: 44)
+                                .clipShape(Circle())
+                            } else {
+                                Circle()
+                                    .fill(Color.blue.opacity(0.2))
+                                    .frame(width: 44, height: 44)
+                                    .overlay(
+                                        Image(systemName: "person.fill")
+                                            .foregroundColor(.blue)
+                                    )
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(user.username)
+                                    .font(.headline)
+                                Text("Joined \(formattedDate(user.createdAt))")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 6)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                .listStyle(.plain)
+            }
+        }
+        .navigationTitle(type.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await viewModel.load(type: type, userId: userId)
+        }
+        .refreshable {
+            await viewModel.load(type: type, userId: userId)
+        }
+        .sheet(item: $selectedUser) { user in
+            NavigationView {
+                PublicProfileView(userId: user.id)
+            }
+        }
     }
     
     private func formattedDate(_ dateString: String) -> String {
