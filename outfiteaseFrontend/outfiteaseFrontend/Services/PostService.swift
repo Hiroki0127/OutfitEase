@@ -15,6 +15,10 @@ class PostService {
         return try await apiService.request(endpoint: Constants.API.posts + "/user")
     }
     
+    func getPosts(for userId: String) async throws -> [Post] {
+        return try await apiService.request(endpoint: Constants.API.posts + "/user/\(userId)")
+    }
+    
     func getPost(id: UUID) async throws -> Post {
         return try await apiService.request(endpoint: Constants.API.posts + "/\(id)")
     }

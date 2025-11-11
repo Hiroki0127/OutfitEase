@@ -8,6 +8,7 @@ router.use(authenticateToken);
 router.post('/', authenticateToken, postController.createPost);
 router.get('/', postController.getAllPosts);//public so no auth 
 router.get('/user', authenticateToken, postController.getPostsByUser);//get current user's posts
+router.get('/user/:id', postController.getPostsByUserId); // get posts for a specific user
 router.get('/:id', postController.getPostById);//public so no auth so pepole can see it
 router.put('/:id', authenticateToken, postController.updatePost);
 

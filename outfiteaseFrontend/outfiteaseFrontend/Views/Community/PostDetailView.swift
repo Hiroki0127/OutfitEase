@@ -10,9 +10,9 @@ struct PostDetailView: View {
     @State private var isLiking = false
     @State private var showShareSheet = false
     @State private var isSavingOutfit = false
-
     @State private var isOutfitSaved = false
     @State private var hasCheckedSavedStatus = false
+    @State private var showUserProfile = false
     
     init(post: Post) {
         self.post = post
@@ -26,46 +26,53 @@ struct PostDetailView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     // User Info Header
                     HStack {
-                        if let urlString = post.avatarURL, let url = URL(string: urlString) {
-                            AsyncImage(url: url) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                case .failure:
-                                    Image(systemName: "person.fill")
-                                        .font(.system(size: 24))
-                                        .foregroundColor(.blue)
-                                @unknown default:
-                                    Image(systemName: "person.fill")
-                                        .font(.system(size: 24))
-                                        .foregroundColor(.blue)
+                        Button {
+                            showUserProfile = true
+                        } label: {
+                            HStack(spacing: 12) {
+                                if let urlString = post.avatarURL, let url = URL(string: urlString) {
+                                    AsyncImage(url: url) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                        case .failure:
+                                            Image(systemName: "person.fill")
+                                                .font(.system(size: 24))
+                                                .foregroundColor(.blue)
+                                        @unknown default:
+                                            Image(systemName: "person.fill")
+                                                .font(.system(size: 24))
+                                                .foregroundColor(.blue)
+                                        }
+                                    }
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(Circle())
+                                } else {
+                                    Circle()
+                                        .fill(Color.blue.opacity(0.2))
+                                        .frame(width: 50, height: 50)
+                                        .overlay(
+                                            Image(systemName: "person.fill")
+                                                .foregroundColor(.blue)
+                                        )
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(post.username)
+                                        .font(.headline)
+                                        .fontWeight(.semibold)
+                                    
+                                    Text(post.createdAt)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
                                 }
                             }
-                            .frame(width: 50, height: 50)
-                            .clipShape(Circle())
-                        } else {
-                            Circle()
-                                .fill(Color.blue.opacity(0.2))
-                                .frame(width: 50, height: 50)
-                                .overlay(
-                                    Image(systemName: "person.fill")
-                                        .foregroundColor(.blue)
-                                )
                         }
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(post.username)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                            
-                            Text(post.createdAt)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
+                        .buttonStyle(.plain)
                         
                         Spacer()
                     }
@@ -230,6 +237,11 @@ struct PostDetailView: View {
             }
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(activityItems: createShareItems())
+            }
+            .sheet(isPresented: $showUserProfile) {
+                NavigationView {
+                    PublicProfileView(userId: post.userId.uuidString)
+                }
             }
             
             .task {

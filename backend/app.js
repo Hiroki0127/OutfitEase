@@ -26,6 +26,8 @@ app.use('/likes', require('./routes/likes'));
 app.use('/saved-outfits', require('./routes/savedOutfits'));
 app.use('/comments', require('./routes/comments'));
 app.use('/upload', uploadRoutes);
+app.use('/follow', require('./routes/follow'));
+app.use('/users', require('./routes/users'));
 
 // New feature routes
 app.use('/outfit-generation', require('./routes/outfitGeneration'));

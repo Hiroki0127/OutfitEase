@@ -17,6 +17,8 @@ struct Constants {
         static let savedOutfits = "/saved-outfits"
         static let comments = "/comments"
         static let upload = "/upload"
+        static let follow = "/follow"
+        static let users = "/users"
         
         // New feature endpoints
         static let outfitGeneration = "/outfit-generation"

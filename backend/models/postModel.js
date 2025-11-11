@@ -198,7 +198,7 @@ async function deletePost(id, userId = null) {
   return res.rows.length > 0;
 }
 
-async function getPostsByUser(userId) {
+async function getPostsByUser(userId, viewerId = null) {
   const result = await db.query(`
     SELECT 
       p.*,
@@ -233,12 +233,45 @@ async function getPostsByUser(userId) {
     LEFT JOIN (
       SELECT post_id, true as is_liked
       FROM post_likes
-      WHERE user_id = $1
+      WHERE user_id = $2
     ) user_likes ON p.id = user_likes.post_id
     WHERE p.user_id = $1
     ORDER BY p.created_at DESC
-  `, [userId]);
-  return result.rows;
+  `, [userId, viewerId]);
+
+  const postsWithItems = await Promise.all(
+    result.rows.map(async (post) => {
+      if (post.outfit_id) {
+        const itemsRes = await db.query(
+          `SELECT c.* FROM outfit_items oi
+           JOIN clothing_items c ON c.id = oi.clothing_item_id
+           WHERE oi.outfit_id = $1`,
+          [post.outfit_id]
+        );
+
+        const formattedItems = itemsRes.rows.map((item) => ({
+          id: item.id.toString(),
+          user_id: item.user_id.toString(),
+          name: item.name,
+          type: item.type,
+          color: item.color,
+          style: item.style,
+          brand: item.brand,
+          price: item.price ? parseFloat(item.price) : null,
+          season: item.season ? [item.season] : null,
+          occasion: item.occasion ? [item.occasion] : null,
+          image_url: item.image_url,
+          created_at: item.created_at,
+        }));
+
+        return { ...post, outfit_items: formattedItems };
+      }
+
+      return post;
+    })
+  );
+
+  return postsWithItems;
 }
 
 // Export all functions

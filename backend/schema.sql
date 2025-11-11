@@ -78,6 +78,17 @@ CREATE TABLE IF NOT EXISTS outfit_planning (
   title TEXT
 );
 
+-- USER FOLLOWERS table
+CREATE TABLE IF NOT EXISTS user_followers (
+  follower_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  following_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  PRIMARY KEY (follower_id, following_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_followers_follower ON user_followers(follower_id);
+CREATE INDEX IF NOT EXISTS idx_user_followers_following ON user_followers(following_id);
+
 -- POSTS table (community sharing)
 CREATE TABLE IF NOT EXISTS posts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -37,6 +37,19 @@ class PostViewModel: ObservableObject {
         isLoading = false
     }
     
+    func loadPosts(for userId: String) async {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            posts = try await postService.getPosts(for: userId)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
+    }
+    
     func createPost(_ post: CreatePostRequest) async {
         isLoading = true
         errorMessage = nil

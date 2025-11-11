@@ -3,6 +3,11 @@ import SwiftUI
 struct PostFeedView: View {
     @StateObject private var postViewModel = PostViewModel()
     @State private var showCreatePost = false
+    @State private var selectedUser: SelectedUser?
+
+    struct SelectedUser: Identifiable {
+        let id: UUID
+    }
 
     var body: some View {
         NavigationView {
@@ -31,7 +36,9 @@ struct PostFeedView: View {
                     ScrollView {
                         LazyVStack(spacing: 16) {
                             ForEach(postViewModel.posts) { post in
-                                PostCardView(post: post)
+                                PostCardView(post: post, onUserTapped: {
+                                    selectedUser = SelectedUser(id: post.userId)
+                                })
                                     .padding(.horizontal)
                             }
                         }
@@ -49,6 +56,11 @@ struct PostFeedView: View {
             }
             .sheet(isPresented: $showCreatePost) {
                 CreatePostView()
+            }
+            .sheet(item: $selectedUser) { selection in
+                NavigationView {
+                    PublicProfileView(userId: selection.id.uuidString)
+                }
             }
             .task {
                 await postViewModel.loadPosts()

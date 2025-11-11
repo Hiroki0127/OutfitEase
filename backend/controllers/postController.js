@@ -1,6 +1,47 @@
 const postModel = require('../models/postModel');
 const pool = require('../db'); // adjust the path if needed
 
+const transformPost = (post) => {
+  if (!post) return post;
+
+  const transformedPost = { ...post };
+
+  if (post.outfit_id) {
+    transformedPost.outfit = {
+      id: post.outfit_id,
+      user_id: post.user_id,
+      name: post.outfit_name,
+      description: post.outfit_description,
+      total_price: post.outfit_total_price,
+      style: post.outfit_style,
+      color: post.outfit_color,
+      brand: post.outfit_brand,
+      season: post.outfit_season,
+      occasion: post.outfit_occasion,
+      image_url: post.image_url,
+      created_at: post.outfit_created_at,
+      items: post.outfit_items || [],
+    };
+  } else {
+    transformedPost.outfit = null;
+  }
+
+  delete transformedPost.outfit_name;
+  delete transformedPost.outfit_description;
+  delete transformedPost.outfit_total_price;
+  delete transformedPost.outfit_style;
+  delete transformedPost.outfit_color;
+  delete transformedPost.outfit_brand;
+  delete transformedPost.outfit_season;
+  delete transformedPost.outfit_occasion;
+  delete transformedPost.outfit_created_at;
+  delete transformedPost.outfit_items;
+
+  return transformedPost;
+};
+
+const transformPosts = (posts = []) => posts.map(transformPost);
+
 exports.createPost = async (req, res) => {
   const { outfitId, caption } = req.body;
   const userId = req.user.userId;  // or req.user.id, whichever you use consistently
@@ -16,40 +57,7 @@ exports.createPost = async (req, res) => {
     const fullPost = await postModel.getPostById(newPost.id, userId);
     
     // Transform post to include structured outfit data
-    const transformedPost = { ...fullPost };
-    
-    // Create outfit object if outfit_id exists
-    if (fullPost.outfit_id) {
-      transformedPost.outfit = {
-        id: fullPost.outfit_id,
-        user_id: fullPost.user_id,
-        name: fullPost.outfit_name,
-        description: fullPost.outfit_description,
-        total_price: fullPost.outfit_total_price,
-        style: fullPost.outfit_style,
-        color: fullPost.outfit_color,
-        brand: fullPost.outfit_brand,
-        season: fullPost.outfit_season,
-        occasion: fullPost.outfit_occasion,
-        image_url: fullPost.image_url,
-        created_at: fullPost.outfit_created_at
-      };
-    } else {
-      transformedPost.outfit = null;
-    }
-    
-    // Remove individual outfit fields to avoid duplication
-    delete transformedPost.outfit_name;
-    delete transformedPost.outfit_description;
-    delete transformedPost.outfit_total_price;
-    delete transformedPost.outfit_style;
-    delete transformedPost.outfit_color;
-    delete transformedPost.outfit_brand;
-    delete transformedPost.outfit_season;
-    delete transformedPost.outfit_occasion;
-    delete transformedPost.outfit_created_at;
-    
-    res.status(201).json(transformedPost);
+    res.status(201).json(transformPost(fullPost));
   } catch (err) {
     console.error('Failed to create post:', err);
     res.status(500).json({ error: 'Failed to create post' });
@@ -64,38 +72,7 @@ exports.getAllPosts = async (req, res) => {
     const posts = await postModel.getAllPosts(req.user?.userId);
     console.log(`✅ Found ${posts.length} posts`);
     
-    // Transform posts to include structured outfit data
-    const transformedPosts = posts.map(post => {
-      const transformedPost = { ...post };
-      
-      transformedPost.avatar_url = post.avatar_url;
-      
-      // Create outfit object if outfit_id exists
-      if (post.outfit_id) {
-        transformedPost.outfit = {
-          id: post.outfit_id,
-          user_id: post.user_id,
-          name: post.outfit_name,
-          description: post.outfit_description,
-          total_price: post.outfit_total_price,
-          style: post.outfit_style,
-          color: post.outfit_color,
-          brand: post.outfit_brand,
-          season: post.outfit_season,
-          occasion: post.outfit_occasion,
-          image_url: post.image_url,
-          created_at: post.outfit_created_at,
-          items: post.outfit_items || [] // Include clothing items
-        };
-      } else {
-        transformedPost.outfit = null;
-      }
-      
-      
-      return transformedPost;
-    });
-    
-    res.json(transformedPosts);
+    res.json(transformPosts(posts));
   } catch (err) {
     console.error('Error fetching posts:', err);
     res.status(500).json({ error: 'Failed to fetch posts' });
@@ -105,50 +82,26 @@ exports.getAllPosts = async (req, res) => {
 exports.getPostsByUser = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const posts = await postModel.getPostsByUser(userId);
+    const posts = await postModel.getPostsByUser(userId, req.user.userId);
     
-    // Transform posts to include structured outfit data
-    const transformedPosts = posts.map(post => {
-      const transformedPost = { ...post };
-      
-      // Create outfit object if outfit_id exists
-      if (post.outfit_id) {
-        transformedPost.outfit = {
-          id: post.outfit_id,
-          user_id: post.user_id,
-          name: post.outfit_name,
-          description: post.outfit_description,
-          total_price: post.outfit_total_price,
-          style: post.outfit_style,
-          color: post.outfit_color,
-          brand: post.outfit_brand,
-          season: post.outfit_season,
-          occasion: post.outfit_occasion,
-          image_url: post.image_url,
-          created_at: post.outfit_created_at
-        };
-      } else {
-        transformedPost.outfit = null;
-      }
-      
-      // Remove individual outfit fields to avoid duplication
-      delete transformedPost.outfit_name;
-      delete transformedPost.outfit_description;
-      delete transformedPost.outfit_total_price;
-      delete transformedPost.outfit_style;
-      delete transformedPost.outfit_color;
-      delete transformedPost.outfit_brand;
-      delete transformedPost.outfit_season;
-      delete transformedPost.outfit_occasion;
-      delete transformedPost.outfit_created_at;
-      
-      return transformedPost;
-    });
-    
-    res.json(transformedPosts);
+    res.json(transformPosts(posts));
   } catch (err) {
     console.error('Error fetching user posts:', err);
     res.status(500).json({ error: 'Failed to fetch user posts' });
+  }
+};
+
+exports.getPostsByUserId = async (req, res) => {
+  try {
+    const { id: targetUserId } = req.params;
+    const viewerId = req.user?.userId ?? null;
+
+    const posts = await postModel.getPostsByUser(targetUserId, viewerId);
+
+    res.json(transformPosts(posts));
+  } catch (err) {
+    console.error('Error fetching posts by user ID:', err);
+    res.status(500).json({ error: 'Failed to fetch posts for user' });
   }
 };
 
@@ -160,40 +113,7 @@ exports.getPostById = async (req, res) => {
     if (!post) return res.status(404).json({ error: 'Post not found' });
     
     // Transform post to include structured outfit data
-    const transformedPost = { ...post };
-    
-    // Create outfit object if outfit_id exists
-    if (post.outfit_id) {
-      transformedPost.outfit = {
-        id: post.outfit_id,
-        user_id: post.user_id,
-        name: post.outfit_name,
-        description: post.outfit_description,
-        total_price: post.outfit_total_price,
-        style: post.outfit_style,
-        color: post.outfit_color,
-        brand: post.outfit_brand,
-        season: post.outfit_season,
-        occasion: post.outfit_occasion,
-        image_url: post.image_url,
-        created_at: post.outfit_created_at
-      };
-    } else {
-      transformedPost.outfit = null;
-    }
-    
-    // Remove individual outfit fields to avoid duplication
-    delete transformedPost.outfit_name;
-    delete transformedPost.outfit_description;
-    delete transformedPost.outfit_total_price;
-    delete transformedPost.outfit_style;
-    delete transformedPost.outfit_color;
-    delete transformedPost.outfit_brand;
-    delete transformedPost.outfit_season;
-    delete transformedPost.outfit_occasion;
-    delete transformedPost.outfit_created_at;
-    
-    res.json(transformedPost);
+    res.json(transformPost(post));
   } catch (err) {
     console.error('Error fetching post:', err);
     res.status(500).json({ error: 'Failed to fetch post' });

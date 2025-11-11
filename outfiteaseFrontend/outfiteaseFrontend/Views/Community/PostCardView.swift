@@ -4,6 +4,7 @@ struct PostCardView: View {
     let post: Post
     let canDelete: Bool
     let onDelete: (() async -> Void)?
+    let onUserTapped: (() -> Void)?
     @StateObject private var commentViewModel = CommentViewModel()
     @State private var showComments = false
     @State private var showPostDetail = false
@@ -18,57 +19,77 @@ struct PostCardView: View {
     @State private var isOutfitSaved = false
     @State private var hasCheckedSavedStatus = false
     
-    init(post: Post, canDelete: Bool = false, onDelete: (() async -> Void)? = nil) {
+    init(
+        post: Post,
+        canDelete: Bool = false,
+        onDelete: (() async -> Void)? = nil,
+        onUserTapped: (() -> Void)? = nil
+    ) {
         self.post = post
         self.canDelete = canDelete
         self.onDelete = onDelete
+        self.onUserTapped = onUserTapped
         self._isLiked = State(initialValue: post.isLiked)
         self._likeCount = State(initialValue: post.likeCount)
+    }
+    
+    @ViewBuilder
+    private var userHeaderContent: some View {
+        HStack(spacing: 12) {
+            if let urlString = post.avatarURL, let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    case .failure:
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.blue)
+                    @unknown default:
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.blue)
+                    }
+                }
+                .frame(width: 40, height: 40)
+                .clipShape(Circle())
+            } else {
+                Circle()
+                    .fill(Color.blue.opacity(0.2))
+                    .frame(width: 40, height: 40)
+                    .overlay(
+                        Image(systemName: "person.fill")
+                            .foregroundColor(.blue)
+                    )
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(post.username)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                
+                Text(post.createdAt)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // User Info Header
             HStack {
-                if let urlString = post.avatarURL, let url = URL(string: urlString) {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        case .failure:
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 20))
-                                .foregroundColor(.blue)
-                        @unknown default:
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 20))
-                                .foregroundColor(.blue)
-                        }
+                if let onUserTapped = onUserTapped {
+                    Button(action: onUserTapped) {
+                        userHeaderContent
                     }
-                    .frame(width: 40, height: 40)
-                    .clipShape(Circle())
+                    .buttonStyle(.plain)
                 } else {
-                    Circle()
-                        .fill(Color.blue.opacity(0.2))
-                        .frame(width: 40, height: 40)
-                        .overlay(
-                            Image(systemName: "person.fill")
-                                .foregroundColor(.blue)
-                        )
-                }
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(post.username)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                    
-                    Text(post.createdAt)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    userHeaderContent
                 }
                 
                 Spacer()
@@ -83,13 +104,6 @@ struct PostCardView: View {
                     } label: {
                         Image(systemName: "ellipsis")
                             .foregroundColor(.secondary)
-                    }
-                } else {
-                Button(action: {
-                        // Additional options could go here
-                }) {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(.secondary)
                     }
                 }
             }

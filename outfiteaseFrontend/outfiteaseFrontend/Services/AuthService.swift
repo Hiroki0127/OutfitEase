@@ -91,3 +91,97 @@ class AuthService {
         return response.user
     }
 }
+
+struct PublicProfileResponse: Codable {
+    var user: PublicProfileUser
+    var stats: PublicProfileStats
+    var isFollowing: Bool
+    let isSelf: Bool
+}
+
+struct PublicProfileUser: Codable {
+    let id: String
+    let email: String
+    let username: String
+    let avatarUrl: String?
+    let createdAt: String
+    let role: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case email
+        case username
+        case avatarUrl = "avatar_url"
+        case createdAt = "created_at"
+        case role
+    }
+}
+
+struct PublicProfileStats: Codable {
+    var followerCount: Int
+    var followingCount: Int
+    var postCount: Int
+    var outfitCount: Int
+}
+
+struct FollowStats: Codable {
+    let followerCount: Int
+    let followingCount: Int
+}
+
+struct FollowActionResponse: Codable {
+    let message: String?
+    let isFollowing: Bool?
+    let stats: FollowStats
+}
+
+struct FollowListUser: Codable, Identifiable {
+    let id: String
+    let username: String
+    let avatarUrl: String?
+    let createdAt: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case username
+        case avatarUrl = "avatar_url"
+        case createdAt = "created_at"
+    }
+}
+
+class UserService {
+    static let shared = UserService()
+    private let apiService = APIService.shared
+    
+    private init() {}
+    
+    func getPublicProfile(userId: String) async throws -> PublicProfileResponse {
+        return try await apiService.request(endpoint: Constants.API.users + "/\(userId)")
+    }
+    
+    func follow(userId: String) async throws -> FollowActionResponse {
+        return try await apiService.request(
+            endpoint: Constants.API.follow + "/\(userId)",
+            method: .POST
+        )
+    }
+    
+    func unfollow(userId: String) async throws -> FollowActionResponse {
+        return try await apiService.request(
+            endpoint: Constants.API.follow + "/\(userId)",
+            method: .DELETE
+        )
+    }
+    
+    func getFollowStats(userId: String) async throws -> FollowStats {
+        return try await apiService.request(endpoint: Constants.API.follow + "/stats/\(userId)")
+    }
+    
+    func getFollowers(userId: String) async throws -> [FollowListUser] {
+        return try await apiService.request(endpoint: Constants.API.follow + "/followers/\(userId)")
+    }
+    
+    func getFollowing(userId: String) async throws -> [FollowListUser] {
+        return try await apiService.request(endpoint: Constants.API.follow + "/following/\(userId)")
+    }
+}
