@@ -111,6 +111,7 @@ CREATE TABLE IF NOT EXISTS post_comments (
   post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   comment TEXT NOT NULL,
+  parent_comment_id UUID REFERENCES post_comments(id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

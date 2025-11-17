@@ -245,13 +245,27 @@ struct TagSection: View {
     }
 }
 
+// Wrapper to ensure proper Identifiable conformance for sheet(item:)
+struct IdentifiableClothingItem: Identifiable, Hashable {
+    let item: ClothingItem
+    
+    var id: String { item.id }
+    
+    static func == (lhs: IdentifiableClothingItem, rhs: IdentifiableClothingItem) -> Bool {
+        lhs.item.id == rhs.item.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(item.id)
+    }
+}
+
 struct ClothingPiecesSection: View {
     let clothingItems: [ClothingItem]
     var outfitViewModel: OutfitViewModel?
     @StateObject private var clothingViewModel = ClothingViewModel()
     @StateObject private var defaultOutfitViewModel = OutfitViewModel()
-    @State private var selectedClothingItem: ClothingItem?
-    @State private var showClothingDetail = false
+    @State private var selectedClothingItem: IdentifiableClothingItem?
     
     private var effectiveOutfitViewModel: OutfitViewModel {
         outfitViewModel ?? defaultOutfitViewModel
@@ -267,18 +281,29 @@ struct ClothingPiecesSection: View {
             VStack(spacing: 8) {
                 ForEach(clothingItems, id: \.id) { item in
                     Button(action: {
-                        print("👕 Clothing piece tapped: \(item.name) (ID: \(item.id))")
-                        // Set the item directly in state first
-                        selectedClothingItem = item
-                        print("✅ selectedClothingItem set to: \(selectedClothingItem?.name ?? "nil")")
-                        // Use Task to ensure state update happens on main thread before sheet evaluates
-                        Task { @MainActor in
-                            // Small delay to ensure state propagates
-                            try? await Task.sleep(nanoseconds: 10_000_000) // 0.01 seconds
-                            showClothingDetail = true
-                            print("📱 showClothingDetail set to: \(showClothingDetail)")
-                            print("📱 selectedClothingItem at show time: \(selectedClothingItem?.name ?? "nil")")
+                        print("👕 Clothing piece tapped: \(item.name)")
+                        print("   ID: \(item.id)")
+                        print("   Type: \(item.type ?? "nil")")
+                        print("   Total items in array: \(clothingItems.count)")
+                        print("   Item exists in array: \(clothingItems.contains { $0.id == item.id })")
+                        
+                        // Verify the item has a valid ID
+                        guard !item.id.isEmpty else {
+                            print("❌ ERROR: Item has empty ID!")
+                            return
                         }
+                        
+                        // Verify the item exists in our array
+                        guard clothingItems.contains(where: { $0.id == item.id }) else {
+                            print("❌ ERROR: Item not found in clothingItems array!")
+                            return
+                        }
+                        
+                        // Wrap and set the item
+                        let wrappedItem = IdentifiableClothingItem(item: item)
+                        selectedClothingItem = wrappedItem
+                        print("✅ selectedClothingItem set to: \(selectedClothingItem?.item.name ?? "nil")")
+                        print("✅ selectedClothingItem ID: \(selectedClothingItem?.id ?? "nil")")
                     }) {
                         HStack {
                             // Clothing item image
@@ -344,53 +369,20 @@ struct ClothingPiecesSection: View {
                 }
             }
         }
-        .sheet(isPresented: $showClothingDetail) {
+        .sheet(item: $selectedClothingItem) { wrappedItem in
             NavigationView {
-                Group {
-                    if let item = selectedClothingItem {
-                        ClothingDetailView(
-                            clothingItem: item,
-                            clothingViewModel: clothingViewModel,
-                            outfitViewModel: effectiveOutfitViewModel
-                        )
-                        .onAppear {
-                            print("✅ ClothingDetailView appeared with item: \(item.name)")
-                        }
-                    } else {
-                        VStack(spacing: 16) {
-                            Text("Error loading clothing item")
-                                .foregroundColor(.secondary)
-                            Text("selectedClothingItem is nil")
-                                .font(.caption)
-                                .foregroundColor(.red)
-                        }
-                        .navigationTitle("Clothing Detail")
-                        .navigationBarTitleDisplayMode(.inline)
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button("Done") {
-                                    print("❌ Closing sheet - item was nil")
-                                    showClothingDetail = false
-                                    selectedClothingItem = nil
-                                }
-                            }
-                        }
-                        .onAppear {
-                            print("❌ Sheet appeared but selectedClothingItem is nil")
-                            print("   showClothingDetail: \(showClothingDetail)")
-                            print("   selectedClothingItem: \(selectedClothingItem?.name ?? "nil")")
-                            print("   clothingItems count: \(clothingItems.count)")
-                            print("   clothingItems: \(clothingItems.map { $0.name })")
-                        }
-                    }
+                ClothingDetailView(
+                    clothingItem: wrappedItem.item,
+                    clothingViewModel: clothingViewModel,
+                    outfitViewModel: effectiveOutfitViewModel
+                )
+                .onAppear {
+                    print("✅ ClothingDetailView appeared with item: \(wrappedItem.item.name)")
+                    print("   Item ID: \(wrappedItem.item.id)")
                 }
             }
-            .onAppear {
-                print("📱 Sheet isPresented: \(showClothingDetail)")
-                print("📱 selectedClothingItem: \(selectedClothingItem?.name ?? "nil")")
-                print("📱 selectedClothingItem ID: \(selectedClothingItem?.id ?? "nil")")
-            }
             .onDisappear {
+                print("📱 Sheet dismissed for item: \(wrappedItem.item.name)")
                 selectedClothingItem = nil
             }
         }
