@@ -116,7 +116,10 @@ struct OutfitDetailView: View {
                     
                     // Clothing Pieces Section
                     if let items = currentOutfit.items, !items.isEmpty {
-                        ClothingPiecesSection(clothingItems: items)
+                        ClothingPiecesSection(
+                            clothingItems: items,
+                            outfitViewModel: outfitViewModel
+                        )
                     }
                     
                     // Actions
@@ -244,9 +247,15 @@ struct TagSection: View {
 
 struct ClothingPiecesSection: View {
     let clothingItems: [ClothingItem]
+    var outfitViewModel: OutfitViewModel?
     @StateObject private var clothingViewModel = ClothingViewModel()
+    @StateObject private var defaultOutfitViewModel = OutfitViewModel()
     @State private var selectedClothingItem: ClothingItem?
     @State private var showClothingDetail = false
+    
+    private var effectiveOutfitViewModel: OutfitViewModel {
+        outfitViewModel ?? defaultOutfitViewModel
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -331,7 +340,7 @@ struct ClothingPiecesSection: View {
                     ClothingDetailView(
                         clothingItem: item,
                         clothingViewModel: clothingViewModel,
-                        outfitViewModel: OutfitViewModel()
+                        outfitViewModel: effectiveOutfitViewModel
                     )
                 } else {
                     VStack {
