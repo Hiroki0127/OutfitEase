@@ -245,13 +245,8 @@ struct TagSection: View {
 struct ClothingPiecesSection: View {
     let clothingItems: [ClothingItem]
     @StateObject private var clothingViewModel = ClothingViewModel()
-    @State private var selectedClothingItemId: String?
+    @State private var selectedClothingItem: ClothingItem?
     @State private var showClothingDetail = false
-    
-    private var selectedClothingItem: ClothingItem? {
-        guard let id = selectedClothingItemId else { return nil }
-        return clothingItems.first { $0.id == id }
-    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -263,7 +258,7 @@ struct ClothingPiecesSection: View {
             VStack(spacing: 8) {
                 ForEach(clothingItems, id: \.id) { item in
                     Button(action: {
-                        selectedClothingItemId = item.id
+                        selectedClothingItem = item
                         showClothingDetail = true
                     }) {
                         HStack {
@@ -331,13 +326,27 @@ struct ClothingPiecesSection: View {
             }
         }
         .sheet(isPresented: $showClothingDetail) {
-            if let item = selectedClothingItem {
-                NavigationView {
+            NavigationView {
+                if let item = selectedClothingItem {
                     ClothingDetailView(
                         clothingItem: item,
                         clothingViewModel: clothingViewModel,
                         outfitViewModel: OutfitViewModel()
                     )
+                } else {
+                    VStack {
+                        Text("Error loading clothing item")
+                            .foregroundColor(.secondary)
+                    }
+                    .navigationTitle("Clothing Detail")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done") {
+                                showClothingDetail = false
+                            }
+                        }
+                    }
                 }
             }
         }
