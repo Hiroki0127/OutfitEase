@@ -250,11 +250,16 @@ struct ClothingPiecesSection: View {
     var outfitViewModel: OutfitViewModel?
     @StateObject private var clothingViewModel = ClothingViewModel()
     @StateObject private var defaultOutfitViewModel = OutfitViewModel()
-    @State private var selectedClothingItem: ClothingItem?
+    @State private var selectedClothingItemId: String?
     @State private var showClothingDetail = false
     
     private var effectiveOutfitViewModel: OutfitViewModel {
         outfitViewModel ?? defaultOutfitViewModel
+    }
+    
+    private var selectedClothingItem: ClothingItem? {
+        guard let id = selectedClothingItemId else { return nil }
+        return clothingItems.first { $0.id == id }
     }
     
     var body: some View {
@@ -267,8 +272,12 @@ struct ClothingPiecesSection: View {
             VStack(spacing: 8) {
                 ForEach(clothingItems, id: \.id) { item in
                     Button(action: {
-                        selectedClothingItem = item
+                        print("👕 Clothing piece tapped: \(item.name) (ID: \(item.id))")
+                        selectedClothingItemId = item.id
+                        print("✅ selectedClothingItemId set to: \(selectedClothingItemId ?? "nil")")
                         showClothingDetail = true
+                        print("📱 showClothingDetail set to: \(showClothingDetail)")
+                        print("📱 selectedClothingItem computed: \(selectedClothingItem?.name ?? "nil")")
                     }) {
                         HStack {
                             // Clothing item image
@@ -336,27 +345,55 @@ struct ClothingPiecesSection: View {
         }
         .sheet(isPresented: $showClothingDetail) {
             NavigationView {
-                if let item = selectedClothingItem {
-                    ClothingDetailView(
-                        clothingItem: item,
-                        clothingViewModel: clothingViewModel,
-                        outfitViewModel: effectiveOutfitViewModel
-                    )
-                } else {
-                    VStack {
-                        Text("Error loading clothing item")
-                            .foregroundColor(.secondary)
-                    }
-                    .navigationTitle("Clothing Detail")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("Done") {
-                                showClothingDetail = false
+                Group {
+                    if let item = selectedClothingItem {
+                        ClothingDetailView(
+                            clothingItem: item,
+                            clothingViewModel: clothingViewModel,
+                            outfitViewModel: effectiveOutfitViewModel
+                        )
+                        .onAppear {
+                            print("✅ ClothingDetailView appeared with item: \(item.name)")
+                        }
+                    } else {
+                        VStack(spacing: 16) {
+                            Text("Error loading clothing item")
+                                .foregroundColor(.secondary)
+                            Text("selectedClothingItem is nil")
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .navigationTitle("Clothing Detail")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button("Done") {
+                                    print("❌ Closing sheet - item was nil")
+                                    showClothingDetail = false
+                                    selectedClothingItemId = nil
+                                }
+                            }
+                        }
+                        .onAppear {
+                            print("❌ Sheet appeared but selectedClothingItem is nil")
+                            print("   showClothingDetail: \(showClothingDetail)")
+                            print("   selectedClothingItemId: \(selectedClothingItemId ?? "nil")")
+                            print("   clothingItems count: \(clothingItems.count)")
+                            if let id = selectedClothingItemId {
+                                print("   Looking for item with ID: \(id)")
+                                print("   Found: \(clothingItems.first { $0.id == id }?.name ?? "not found")")
                             }
                         }
                     }
                 }
+            }
+            .onAppear {
+                print("📱 Sheet isPresented: \(showClothingDetail)")
+                print("📱 selectedClothingItemId: \(selectedClothingItemId ?? "nil")")
+                print("📱 selectedClothingItem computed: \(selectedClothingItem?.name ?? "nil")")
+            }
+            .onDisappear {
+                selectedClothingItemId = nil
             }
         }
     }
