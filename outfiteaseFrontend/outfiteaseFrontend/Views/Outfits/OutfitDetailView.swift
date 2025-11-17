@@ -250,16 +250,11 @@ struct ClothingPiecesSection: View {
     var outfitViewModel: OutfitViewModel?
     @StateObject private var clothingViewModel = ClothingViewModel()
     @StateObject private var defaultOutfitViewModel = OutfitViewModel()
-    @State private var selectedClothingItemId: String?
+    @State private var selectedClothingItem: ClothingItem?
     @State private var showClothingDetail = false
     
     private var effectiveOutfitViewModel: OutfitViewModel {
         outfitViewModel ?? defaultOutfitViewModel
-    }
-    
-    private var selectedClothingItem: ClothingItem? {
-        guard let id = selectedClothingItemId else { return nil }
-        return clothingItems.first { $0.id == id }
     }
     
     var body: some View {
@@ -273,11 +268,17 @@ struct ClothingPiecesSection: View {
                 ForEach(clothingItems, id: \.id) { item in
                     Button(action: {
                         print("👕 Clothing piece tapped: \(item.name) (ID: \(item.id))")
-                        selectedClothingItemId = item.id
-                        print("✅ selectedClothingItemId set to: \(selectedClothingItemId ?? "nil")")
-                        showClothingDetail = true
-                        print("📱 showClothingDetail set to: \(showClothingDetail)")
-                        print("📱 selectedClothingItem computed: \(selectedClothingItem?.name ?? "nil")")
+                        // Set the item directly in state first
+                        selectedClothingItem = item
+                        print("✅ selectedClothingItem set to: \(selectedClothingItem?.name ?? "nil")")
+                        // Use Task to ensure state update happens on main thread before sheet evaluates
+                        Task { @MainActor in
+                            // Small delay to ensure state propagates
+                            try? await Task.sleep(nanoseconds: 10_000_000) // 0.01 seconds
+                            showClothingDetail = true
+                            print("📱 showClothingDetail set to: \(showClothingDetail)")
+                            print("📱 selectedClothingItem at show time: \(selectedClothingItem?.name ?? "nil")")
+                        }
                     }) {
                         HStack {
                             // Clothing item image
@@ -370,30 +371,27 @@ struct ClothingPiecesSection: View {
                                 Button("Done") {
                                     print("❌ Closing sheet - item was nil")
                                     showClothingDetail = false
-                                    selectedClothingItemId = nil
+                                    selectedClothingItem = nil
                                 }
                             }
                         }
                         .onAppear {
                             print("❌ Sheet appeared but selectedClothingItem is nil")
                             print("   showClothingDetail: \(showClothingDetail)")
-                            print("   selectedClothingItemId: \(selectedClothingItemId ?? "nil")")
+                            print("   selectedClothingItem: \(selectedClothingItem?.name ?? "nil")")
                             print("   clothingItems count: \(clothingItems.count)")
-                            if let id = selectedClothingItemId {
-                                print("   Looking for item with ID: \(id)")
-                                print("   Found: \(clothingItems.first { $0.id == id }?.name ?? "not found")")
-                            }
+                            print("   clothingItems: \(clothingItems.map { $0.name })")
                         }
                     }
                 }
             }
             .onAppear {
                 print("📱 Sheet isPresented: \(showClothingDetail)")
-                print("📱 selectedClothingItemId: \(selectedClothingItemId ?? "nil")")
-                print("📱 selectedClothingItem computed: \(selectedClothingItem?.name ?? "nil")")
+                print("📱 selectedClothingItem: \(selectedClothingItem?.name ?? "nil")")
+                print("📱 selectedClothingItem ID: \(selectedClothingItem?.id ?? "nil")")
             }
             .onDisappear {
-                selectedClothingItemId = nil
+                selectedClothingItem = nil
             }
         }
     }
