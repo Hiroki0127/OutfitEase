@@ -318,8 +318,8 @@ struct ClothingPiecesSection: View {
                         .padding(.vertical, 8)
                         .background(Color(.systemGray6))
                         .cornerRadius(10)
+                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
             }
         }
