@@ -245,6 +245,13 @@ struct TagSection: View {
 struct ClothingPiecesSection: View {
     let clothingItems: [ClothingItem]
     @StateObject private var clothingViewModel = ClothingViewModel()
+    @State private var selectedClothingItemId: String?
+    @State private var showClothingDetail = false
+    
+    private var selectedClothingItem: ClothingItem? {
+        guard let id = selectedClothingItemId else { return nil }
+        return clothingItems.first { $0.id == id }
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -255,11 +262,10 @@ struct ClothingPiecesSection: View {
             
             VStack(spacing: 8) {
                 ForEach(clothingItems, id: \.id) { item in
-                    NavigationLink(destination: ClothingDetailView(
-                        clothingItem: item,
-                        clothingViewModel: clothingViewModel,
-                        outfitViewModel: OutfitViewModel()
-                    )) {
+                    Button(action: {
+                        selectedClothingItemId = item.id
+                        showClothingDetail = true
+                    }) {
                         HStack {
                             // Clothing item image
                             if let imageURL = item.imageUrl, !imageURL.isEmpty {
@@ -320,6 +326,18 @@ struct ClothingPiecesSection: View {
                         .cornerRadius(10)
                         .contentShape(Rectangle())
                     }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+        }
+        .sheet(isPresented: $showClothingDetail) {
+            if let item = selectedClothingItem {
+                NavigationView {
+                    ClothingDetailView(
+                        clothingItem: item,
+                        clothingViewModel: clothingViewModel,
+                        outfitViewModel: OutfitViewModel()
+                    )
                 }
             }
         }
