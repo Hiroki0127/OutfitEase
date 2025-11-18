@@ -65,11 +65,10 @@ struct ProfileView: View {
                         // User Info
                         VStack(spacing: 8) {
                             Text(profileViewModel.currentUser?.username ?? "User")
-                                .font(.title2)
-                                .fontWeight(.semibold)
+                                .font(.appHeadline2)
                             
                             Text(profileViewModel.currentUser?.email ?? "")
-                                .font(.subheadline)
+                                .font(.appBody)
                                 .foregroundColor(.secondary)
                         }
                     }
@@ -78,7 +77,7 @@ struct ProfileView: View {
                     // Stats Section
                     VStack(spacing: 16) {
                         Text("Your Stats")
-                            .font(.headline)
+                            .font(.appHeadline3)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         HStack(spacing: 20) {
@@ -126,7 +125,7 @@ struct ProfileView: View {
                     // Quick Actions
                     VStack(spacing: 16) {
                         Text("Quick Actions")
-                            .font(.headline)
+                            .font(.appHeadline3)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         VStack(spacing: 12) {
@@ -152,7 +151,7 @@ struct ProfileView: View {
                     // Settings Section
                     VStack(spacing: 16) {
                         Text("Settings")
-                            .font(.headline)
+                            .font(.appHeadline3)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         VStack(spacing: 12) {
@@ -232,11 +231,10 @@ struct StatCard: View {
                 .foregroundColor(.blue)
             
             Text(value)
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.appHeadline2)
             
             Text(title)
-                .font(.caption)
+                .font(.appCaption)
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
@@ -264,13 +262,13 @@ struct QuickActionRow: View {
                 .frame(width: 30)
             
             Text(title)
-                .font(.body)
+                .font(.appBody)
                 .foregroundColor(.primary)
             
             Spacer()
             
             Image(systemName: "chevron.right")
-                .font(.caption)
+                .font(.appCaption)
                 .foregroundColor(.secondary)
         }
         .padding()
@@ -310,7 +308,7 @@ struct PublicProfileView: View {
                         .font(.system(size: 40))
                         .foregroundColor(.orange)
                     Text(errorMessage)
-                        .font(.body)
+                        .font(.appBody)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.secondary)
                 }
@@ -322,7 +320,7 @@ struct PublicProfileView: View {
                         .font(.system(size: 40))
                         .foregroundColor(.gray)
                     Text("Profile unavailable")
-                        .font(.body)
+                        .font(.appBody)
                         .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
@@ -374,12 +372,11 @@ struct PublicProfileView: View {
             
             VStack(spacing: 6) {
                 Text(profile.user.username)
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.appHeadline2)
                 
                 if !profile.isSelf {
                     Text("Member since \(formattedDate(profile.user.createdAt))")
-                        .font(.caption)
+                        .font(.appCaption)
                         .foregroundColor(.secondary)
                 }
             }
@@ -391,7 +388,7 @@ struct PublicProfileView: View {
                     }
                 } label: {
                     Text(profile.isFollowing ? "Following" : "Follow")
-                        .fontWeight(.semibold)
+                        .font(.appButton)
                         .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
                     .background(
@@ -441,7 +438,7 @@ struct PublicProfileView: View {
     private var postsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Posts")
-                .font(.headline)
+                .font(.appHeadline3)
             
             if viewModel.posts.isEmpty {
                 VStack(spacing: 12) {
@@ -449,7 +446,7 @@ struct PublicProfileView: View {
                         .font(.system(size: 50))
                         .foregroundColor(.gray.opacity(0.6))
                     Text("No posts yet")
-                        .font(.subheadline)
+                        .font(.appBody)
                         .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity)
@@ -507,7 +504,7 @@ struct FollowListView: View {
                         .font(.system(size: 40))
                         .foregroundColor(.orange)
                     Text(errorMessage)
-                        .font(.body)
+                        .font(.appBody)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.secondary)
                 }
@@ -519,7 +516,7 @@ struct FollowListView: View {
                         .font(.system(size: 50))
                         .foregroundColor(.gray.opacity(0.6))
                     Text(type.emptyMessage)
-                        .font(.subheadline)
+                        .font(.appBody)
                         .foregroundColor(.secondary)
                 }
                 .padding()

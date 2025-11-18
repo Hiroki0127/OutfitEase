@@ -63,11 +63,10 @@ struct PostDetailView: View {
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(post.username)
-                                        .font(.headline)
-                                        .fontWeight(.semibold)
+                                        .font(.appHeadline3)
                                     
                                     Text(post.createdAt)
-                                        .font(.caption)
+                                        .font(.appCaption)
                                         .foregroundColor(.secondary)
                                 }
                             }
@@ -81,7 +80,7 @@ struct PostDetailView: View {
                     // Post Caption
                     if !post.caption.isEmpty {
                         Text(post.caption)
-                            .font(.body)
+                            .font(.appBody)
                             .multilineTextAlignment(.leading)
                             .padding(.horizontal)
                     }
@@ -112,15 +111,14 @@ struct PostDetailView: View {
                             // Outfit Name
                             if let name = outfit.name, !name.isEmpty {
                                 Text(name)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
+                                    .font(.appHeadline2)
                                     .padding(.horizontal)
                             }
                             
                             // Outfit Description
                             if let description = outfit.description, !description.isEmpty {
                                 Text(description)
-                                    .font(.body)
+                                    .font(.appBody)
                                     .foregroundColor(.secondary)
                                     .padding(.horizontal)
                             }
@@ -176,7 +174,7 @@ struct PostDetailView: View {
                                 Image(systemName: isLiked ? "heart.fill" : "heart")
                                     .foregroundColor(.red)
                                 Text("\(likeCount)")
-                                    .font(.subheadline)
+                                    .font(.appBodySmall)
                             }
                         }
                         .disabled(isLiking)
@@ -188,7 +186,7 @@ struct PostDetailView: View {
                                 Image(systemName: "bubble.right")
                                     .foregroundColor(.blue)
                                 Text("\(post.commentCount)")
-                                    .font(.subheadline)
+                                    .font(.appBodySmall)
                             }
                         }
                         
@@ -219,7 +217,7 @@ struct PostDetailView: View {
                         
                         Spacer()
                     }
-                    .font(.subheadline)
+                    .font(.appBodySmall)
                     .padding(.horizontal)
                 }
             }
