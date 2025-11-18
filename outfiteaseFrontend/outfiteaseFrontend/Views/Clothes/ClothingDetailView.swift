@@ -54,8 +54,7 @@ struct ClothingDetailView: View {
                 // Details Section
                 VStack(alignment: .leading, spacing: 16) {
                     Text(clothingItem.name)
-                        .font(.title2)
-                        .fontWeight(.bold)
+                        .font(.appHeadline2)
                     
                     // Tags
                     if let type = clothingItem.type, !type.isEmpty {
@@ -87,12 +86,10 @@ struct ClothingDetailView: View {
                     if let price = clothingItem.price {
                         HStack {
                             Text("Price:")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
+                                .font(.appLabel)
                             Text("$\(price, specifier: "%.2f")")
-                                .font(.subheadline)
+                                .font(.appLabel)
                                 .foregroundColor(.green)
-                                .fontWeight(.semibold)
                         }
                     }
                     

@@ -69,11 +69,10 @@ struct PostCardView: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(post.username)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+                    .font(.appLabel)
                 
                 Text(post.createdAt)
-                    .font(.caption)
+                    .font(.appCaption)
                     .foregroundColor(.secondary)
             }
         }
@@ -111,7 +110,7 @@ struct PostCardView: View {
             // Post Content
             if !post.caption.isEmpty {
                 Text(post.caption)
-                    .font(.body)
+                    .font(.appBody)
                     .multilineTextAlignment(.leading)
             }
             
@@ -145,7 +144,7 @@ struct PostCardView: View {
                                 .font(.system(size: 40))
                                 .foregroundColor(.gray)
                             Text("Outfit Image")
-                                .font(.caption)
+                                .font(.appCaption)
                                 .foregroundColor(.gray)
                         }
                     )
@@ -162,7 +161,7 @@ struct PostCardView: View {
                         Image(systemName: isLiked ? "heart.fill" : "heart")
                             .foregroundColor(.red)
                         Text("\(likeCount)")
-                            .font(.caption)
+                            .font(.appCaption)
                     }
                 }
                 .disabled(isLiking)
@@ -174,7 +173,7 @@ struct PostCardView: View {
                         Image(systemName: "bubble.right")
                             .foregroundColor(.blue)
                         Text("\(post.commentCount)")
-                            .font(.caption)
+                            .font(.appCaption)
                     }
                 }
                 
@@ -205,7 +204,7 @@ struct PostCardView: View {
                 
                 Spacer()
             }
-            .font(.subheadline)
+            .font(.appBodySmall)
         }
         .padding()
         .background(Color(.systemBackground))

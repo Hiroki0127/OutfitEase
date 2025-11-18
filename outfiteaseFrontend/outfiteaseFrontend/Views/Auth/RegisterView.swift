@@ -25,11 +25,10 @@ struct RegisterView: View {
                     VStack(spacing: 10) {
                         
                         Text("Create Account")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
+                            .font(.appDisplaySmall)
                         
                         Text("Join OutfitEase today")
-                            .font(.subheadline)
+                            .font(.appBody)
                             .foregroundColor(.secondary)
                     }
                     .padding(.top, 30)

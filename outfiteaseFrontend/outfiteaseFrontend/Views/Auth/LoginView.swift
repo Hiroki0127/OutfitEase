@@ -29,11 +29,10 @@ struct LoginView: View {
                             
                             
                             Text("OutfitEase")
-                                .font(.custom("AvenirNext-Bold", size: 34))
-                                .fontWeight(.bold)
+                                .font(.appDisplayMedium)
                             
                             Text("Your Personal Style Assistant")
-                                .font(.subheadline)
+                                .font(.appBody)
                                 .foregroundColor(.secondary)
                         }
                         .padding(.top, 50)
@@ -120,7 +119,7 @@ struct LoginView: View {
                                         .scaleEffect(0.8)
                                 } else {
                                     Text("Sign In")
-                                        .fontWeight(.semibold)
+                                        .font(.appButton)
                                 }
                             }
                             .frame(maxWidth: .infinity)
@@ -141,7 +140,7 @@ struct LoginView: View {
                                 .opacity(0.5)
                             
                             Text("or login with")
-                                .font(.caption)
+                                .font(.appCaption)
                                 .foregroundColor(.gray)
                                 .padding(.horizontal, 8)
                             
