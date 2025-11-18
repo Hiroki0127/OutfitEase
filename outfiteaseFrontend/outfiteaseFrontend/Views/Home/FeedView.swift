@@ -17,20 +17,22 @@ struct FeedView: View {
                             .foregroundColor(.gray)
                         
                         Text("No Posts Yet")
-                            .font(.title2)
-                            .fontWeight(.semibold)
+                            .font(.appHeadline2)
                         
                         Text("Be the first to share your outfit!")
-                            .font(.subheadline)
+                            .font(.appBody)
                             .foregroundColor(.secondary)
                         
                         Button("Create Post") {
                             showCreatePost = true
                         }
-                        .padding()
+                        .font(.appButton)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 12)
                         .background(Color.blue)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(12)
+                        .shadow(color: .blue.opacity(0.3), radius: 4, x: 0, y: 2)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
