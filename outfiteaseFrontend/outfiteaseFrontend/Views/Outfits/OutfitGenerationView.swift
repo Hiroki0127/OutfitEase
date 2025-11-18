@@ -27,11 +27,10 @@ struct OutfitGenerationView: View {
                             .foregroundColor(.blue)
                         
                         Text("AI Outfit Generator")
-                            .font(.title2)
-                            .fontWeight(.bold)
+                            .font(.appHeadline2)
                         
                         Text("Get personalized outfit suggestions based on your preferences")
-                            .font(.subheadline)
+                            .font(.appBody)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
                     }
@@ -40,13 +39,12 @@ struct OutfitGenerationView: View {
                     // Filters Section
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Generation Filters")
-                            .font(.headline)
+                            .font(.appHeadline3)
                         
                         // Event Type
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Event Type")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
+                                .font(.appLabel)
                             
                             Picker("Event Type", selection: $selectedEventType) {
                                 Text("Select Event").tag("")

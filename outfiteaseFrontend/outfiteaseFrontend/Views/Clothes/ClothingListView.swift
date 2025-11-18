@@ -32,20 +32,24 @@ struct ClothingListView: View {
                             .foregroundColor(.gray)
                         
                         Text("No Clothes Yet")
-                            .font(.title2)
-                            .fontWeight(.semibold)
+                            .font(.appHeadline2)
                         
                         Text("Add your first clothing item to get started!")
-                            .font(.subheadline)
+                            .font(.appBody)
                             .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
                         
                         Button("Add Clothing") {
                             showAddClothing = true
                         }
-                        .padding()
+                        .font(.appButton)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 12)
                         .background(Color.blue)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(12)
+                        .shadow(color: .blue.opacity(0.3), radius: 4, x: 0, y: 2)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -144,8 +148,7 @@ struct ClothingGridItem: View {
             
             // Item Name
             Text(clothingItem.name)
-                .font(.caption)
-                .fontWeight(.medium)
+                .font(.appCaption)
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.primary)
@@ -153,7 +156,7 @@ struct ClothingGridItem: View {
             // Brand (if available)
             if let brand = clothingItem.brand {
                 Text(brand)
-                    .font(.caption2)
+                    .font(.appCaption)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
             }

@@ -45,8 +45,7 @@ struct CalendarView: View {
                 // Calendar Header
                 VStack(spacing: 16) {
                     Text("Outfit Planning")
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                        .font(.appHeadline2)
                     
                     // Month Navigation
                     HStack {
@@ -66,8 +65,7 @@ struct CalendarView: View {
                             showYearPicker = true
                         }) {
                             Text(currentMonth.formatted(.dateTime.month(.wide).year()))
-                                .font(.title3)
-                                .fontWeight(.semibold)
+                                .font(.appHeadline3)
                                 .foregroundColor(.blue)
                         }
                         
@@ -93,9 +91,9 @@ struct CalendarView: View {
                                 selectedDate = Date()
                             }
                         }
-                        .font(.caption)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
+                        .font(.appButtonSmall)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
                         .background(Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(8)

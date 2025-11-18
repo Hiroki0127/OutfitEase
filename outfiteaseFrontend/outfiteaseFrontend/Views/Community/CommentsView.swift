@@ -23,11 +23,10 @@ struct CommentsView: View {
                                     .foregroundColor(.gray)
                                 
                                 Text("No Comments Yet")
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
+                                    .font(.appHeadline2)
                                 
                                 Text("Be the first to comment!")
-                                    .font(.subheadline)
+                                    .font(.appBody)
                                     .foregroundColor(.secondary)
                             }
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -46,7 +45,7 @@ struct CommentsView: View {
                         if let errorMessage = commentViewModel.errorMessage {
                             Text(errorMessage)
                                 .foregroundColor(.red)
-                                .font(.caption)
+                                .font(.appCaption)
                                 .padding(.horizontal)
                         }
                         
@@ -58,7 +57,7 @@ struct CommentsView: View {
                             if let replyingTo = commentViewModel.replyingTo {
                                 HStack {
                                     Text("Replying to \(replyingTo.username ?? "User")")
-                                        .font(.caption)
+                                        .font(.appCaption)
                                         .foregroundColor(.secondary)
                                     
                                     Spacer()
@@ -67,7 +66,7 @@ struct CommentsView: View {
                                         commentViewModel.replyingTo = nil
                                         commentViewModel.replyText = ""
                                     }
-                                    .font(.caption)
+                                    .font(.appCaption)
                                     .foregroundColor(.red)
                                 }
                                 .padding(.horizontal)
@@ -152,11 +151,10 @@ struct CommentRow: View {
                     // Username and Time
                     HStack {
                         Text(comment.username ?? "User")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
+                            .font(.appLabel)
                         
                         Text(comment.createdAt)
-                            .font(.caption)
+                            .font(.appCaption)
                             .foregroundColor(.secondary)
                         
                         Spacer()
@@ -164,13 +162,13 @@ struct CommentRow: View {
                         Button("Reply") {
                             commentViewModel.replyingTo = comment
                         }
-                        .font(.caption)
+                        .font(.appCaption)
                         .foregroundColor(.blue)
                     }
                     
                     // Comment Text
                     Text(comment.comment)
-                        .font(.body)
+                        .font(.appBody)
                         .multilineTextAlignment(.leading)
                 }
             }
@@ -210,11 +208,10 @@ struct ReplyRow: View {
                     // Username and Time
                     HStack {
                         Text(reply.username ?? "User")
-                            .font(.caption)
-                            .fontWeight(.medium)
+                            .font(.appCaption)
                         
                         Text(reply.createdAt)
-                            .font(.caption2)
+                            .font(.appCaption)
                             .foregroundColor(.secondary)
                         
                         Spacer()
@@ -222,13 +219,13 @@ struct ReplyRow: View {
                         Button("Reply") {
                             commentViewModel.replyingTo = reply
                         }
-                        .font(.caption2)
+                        .font(.appCaption)
                         .foregroundColor(.blue)
                     }
                     
                     // Reply Text
                     Text(reply.comment)
-                        .font(.caption)
+                        .font(.appBodySmall)
                         .multilineTextAlignment(.leading)
                 }
             }

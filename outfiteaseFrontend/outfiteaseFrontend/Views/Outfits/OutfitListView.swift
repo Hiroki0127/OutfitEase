@@ -48,17 +48,16 @@ struct OutfitListView: View {
                                             .foregroundColor(.brown)
                                         
                                         Text("My Outfits")
-                                            .font(.title2)
-                                            .fontWeight(.semibold)
+                                            .font(.appHeadline2)
                                             .foregroundColor(.primary)
                                         
                                         Text("\(filteredOutfits.count) outfit\(filteredOutfits.count == 1 ? "" : "s")")
-                                            .font(.subheadline)
+                                            .font(.appBody)
                                             .foregroundColor(.secondary)
                                         
                                         if filteredOutfits.isEmpty {
                                             Text("Create your first outfit!")
-                                                .font(.caption)
+                                                .font(.appCaption)
                                                 .foregroundColor(.secondary)
                                                 .multilineTextAlignment(.center)
                                         }
@@ -94,17 +93,16 @@ struct OutfitListView: View {
                                             .foregroundColor(.gray)
                                         
                                         Text("Saved Outfits")
-                                            .font(.title2)
-                                            .fontWeight(.semibold)
+                                            .font(.appHeadline2)
                                             .foregroundColor(.primary)
                                         
                                         Text("\(likedOutfitsViewModel.likedOutfits.count) outfit\(likedOutfitsViewModel.likedOutfits.count == 1 ? "" : "s")")
-                                            .font(.subheadline)
+                                            .font(.appBody)
                                             .foregroundColor(.secondary)
                                         
                                         if likedOutfitsViewModel.likedOutfits.isEmpty {
                                             Text("Liked outfits")
-                                                .font(.caption)
+                                                .font(.appCaption)
                                                 .foregroundColor(.secondary)
                                                 .multilineTextAlignment(.center)
                                         }
