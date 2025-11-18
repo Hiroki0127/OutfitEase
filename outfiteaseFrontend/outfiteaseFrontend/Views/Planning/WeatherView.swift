@@ -5,6 +5,7 @@ struct WeatherView: View {
     @StateObject private var weatherViewModel = WeatherViewModel()
     @State private var cityInput: String = ""
     @State private var showingCityInput = false
+    @State private var showLocationAlert = false
     
     var body: some View {
         NavigationView {
@@ -59,8 +60,34 @@ struct WeatherView: View {
             }
             .task {
                 if weatherViewModel.currentWeather == nil && !weatherViewModel.isLoading {
+                    // Try to get weather, but don't fail if permission is denied
                     await weatherViewModel.requestLocationAndWeather()
+                    if weatherViewModel.errorMessage?.contains("Location permission denied") == true {
+                        showLocationAlert = true
+                    }
                 }
+            }
+            .onChange(of: weatherViewModel.errorMessage) { newValue in
+                if newValue?.contains("Location permission denied") == true {
+                    showLocationAlert = true
+                }
+            }
+            .alert("Location Permission Required", isPresented: $showLocationAlert) {
+                Button("Search by City") {
+                    showingCityInput = true
+                    showLocationAlert = false
+                }
+                Button("Open Settings") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                    showLocationAlert = false
+                }
+                Button("Cancel", role: .cancel) {
+                    showLocationAlert = false
+                }
+            } message: {
+                Text("To get weather for your current location, please enable location access in Settings. You can also search for weather by city name.")
             }
         }
     }
