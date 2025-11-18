@@ -1,5 +1,54 @@
 const db = require('../db.js');
 
+// Helper function to parse PostgreSQL array format strings
+// Handles formats like: {Winter}, {"Winter"}, {Winter,Summer}, {"Winter","Summer"}
+function parsePostgreSQLArray(value) {
+  if (!value) return null;
+  
+  // If it's already an array, return it
+  if (Array.isArray(value)) {
+    return value;
+  }
+  
+  // If it's a string, parse PostgreSQL array format
+  if (typeof value === 'string') {
+    // Remove curly braces
+    let cleaned = value.trim();
+    if (cleaned.startsWith('{') && cleaned.endsWith('}')) {
+      cleaned = cleaned.slice(1, -1);
+    }
+    
+    // If empty after removing braces, return null
+    if (!cleaned) return null;
+    
+    // Split by comma and clean up each value
+    const items = cleaned.split(',').map(item => {
+      // Remove quotes if present
+      item = item.trim();
+      if ((item.startsWith('"') && item.endsWith('"')) || 
+          (item.startsWith("'") && item.endsWith("'"))) {
+        item = item.slice(1, -1);
+      }
+      return item.trim();
+    }).filter(item => item.length > 0);
+    
+    return items.length > 0 ? items : null;
+  }
+  
+  // If it's a single value, wrap in array
+  return [value];
+}
+
+// Helper function to convert array to string for storage
+// Since the database column is TEXT, we'll store as comma-separated string
+function arrayToString(value) {
+  if (!value) return null;
+  if (Array.isArray(value)) {
+    return value.length > 0 ? value.join(', ') : null;
+  }
+  return value;
+}
+
 exports.create = async (userId, data) => {
   try {
     const { name, type, color, style, brand, price, season, occasion, image_url } = data;
@@ -8,7 +57,7 @@ exports.create = async (userId, data) => {
        (user_id, name, type, color, style, brand, price, season, occasion, image_url)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
-      [userId, name, type, color, style, brand, price, season, occasion, image_url]
+      [userId, name, type, color, style, brand, price, arrayToString(season), arrayToString(occasion), image_url]
     );
     return result.rows[0];
   } catch (err) {
@@ -34,9 +83,9 @@ exports.getByUserId = async (userId) => {
       style: item.style,
       brand: item.brand,
       price: item.price ? parseFloat(item.price) : null, // Convert string to number
-      // Convert season and occasion strings to arrays (iOS expects arrays)
-      season: item.season ? [item.season] : null,
-      occasion: item.occasion ? [item.occasion] : null,
+      // Parse season and occasion from PostgreSQL format to arrays
+      season: parsePostgreSQLArray(item.season),
+      occasion: parsePostgreSQLArray(item.occasion),
       image_url: item.image_url,
       created_at: item.created_at
     }));
@@ -56,7 +105,7 @@ exports.update = async (id, userId, data) => {
        SET name = $1, type = $2, color = $3, style = $4, brand = $5, price = $6, season = $7, occasion = $8, image_url = $9
        WHERE id = $10 AND user_id = $11
        RETURNING *`,
-      [name, type, color, style, brand, price, season, occasion, image_url, id, userId]
+      [name, type, color, style, brand, price, arrayToString(season), arrayToString(occasion), image_url, id, userId]
     );
 
     console.log('Update result:', result.rows);
@@ -73,9 +122,9 @@ exports.update = async (id, userId, data) => {
         style: item.style,
         brand: item.brand,
         price: item.price ? parseFloat(item.price) : null, // Convert string to number
-        // Convert season and occasion strings to arrays (iOS expects arrays)
-        season: item.season ? [item.season] : null,
-        occasion: item.occasion ? [item.occasion] : null,
+        // Parse season and occasion from PostgreSQL format to arrays
+        season: parsePostgreSQLArray(item.season),
+        occasion: parsePostgreSQLArray(item.occasion),
         image_url: item.image_url,
         created_at: item.created_at
       };
@@ -175,9 +224,9 @@ exports.getFilteredClothingItems = async (userId, filters) => {
       style: item.style,
       brand: item.brand,
       price: item.price ? parseFloat(item.price) : null, // Convert string to number
-      // Convert season and occasion strings to arrays (iOS expects arrays)
-      season: item.season ? [item.season] : null,
-      occasion: item.occasion ? [item.occasion] : null,
+      // Parse season and occasion from PostgreSQL format to arrays
+      season: parsePostgreSQLArray(item.season),
+      occasion: parsePostgreSQLArray(item.occasion),
       image_url: item.image_url,
       created_at: item.created_at
     }));

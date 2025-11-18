@@ -1,5 +1,44 @@
 const db = require('../db');
 
+// Helper function to parse PostgreSQL array format strings
+// Handles formats like: {Winter}, {"Winter"}, {Winter,Summer}, {"Winter","Summer"}
+function parsePostgreSQLArray(value) {
+  if (!value) return null;
+  
+  // If it's already an array, return it
+  if (Array.isArray(value)) {
+    return value;
+  }
+  
+  // If it's a string, parse PostgreSQL array format
+  if (typeof value === 'string') {
+    // Remove curly braces
+    let cleaned = value.trim();
+    if (cleaned.startsWith('{') && cleaned.endsWith('}')) {
+      cleaned = cleaned.slice(1, -1);
+    }
+    
+    // If empty after removing braces, return null
+    if (!cleaned) return null;
+    
+    // Split by comma and clean up each value
+    const items = cleaned.split(',').map(item => {
+      // Remove quotes if present
+      item = item.trim();
+      if ((item.startsWith('"') && item.endsWith('"')) || 
+          (item.startsWith("'") && item.endsWith("'"))) {
+        item = item.slice(1, -1);
+      }
+      return item.trim();
+    }).filter(item => item.length > 0);
+    
+    return items.length > 0 ? items : null;
+  }
+  
+  // If it's a single value, wrap in array
+  return [value];
+}
+
 exports.createOutfit = async (userId, name, description, totalPrice, imageURL, style, color, brand, season, occasion, clothingItemIds) => {
 
   
@@ -51,9 +90,9 @@ exports.getAllOutfitsForUser = async (userId) => {
         style: item.style,
         brand: item.brand,
         price: item.price ? parseFloat(item.price) : null, // Convert string to number
-        // Convert season and occasion strings to arrays (iOS expects arrays)
-        season: item.season ? [item.season] : null,
-        occasion: item.occasion ? [item.occasion] : null,
+        // Parse season and occasion from PostgreSQL format to arrays
+        season: parsePostgreSQLArray(item.season),
+        occasion: parsePostgreSQLArray(item.occasion),
         image_url: item.image_url,
         created_at: item.created_at
       }));
