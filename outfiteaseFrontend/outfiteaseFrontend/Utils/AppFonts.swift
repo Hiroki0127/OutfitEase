@@ -1,36 +1,36 @@
 import SwiftUI
 
-/// Modern typography system using SF Pro with contemporary weights and sizes
+/// Modern typography system using SF Pro Rounded for a friendly, contemporary look
 extension Font {
-    // MARK: - Display Fonts (Large, attention-grabbing)
-    static let appDisplayLarge = Font.system(size: 40, weight: .bold, design: .default)
-    static let appDisplayMedium = Font.system(size: 34, weight: .bold, design: .default)
-    static let appDisplaySmall = Font.system(size: 28, weight: .semibold, design: .default)
+    // MARK: - Display Fonts (Large, attention-grabbing) - Using Rounded for modern feel
+    static let appDisplayLarge = Font.system(size: 42, weight: .heavy, design: .rounded)
+    static let appDisplayMedium = Font.system(size: 36, weight: .bold, design: .rounded)
+    static let appDisplaySmall = Font.system(size: 30, weight: .bold, design: .rounded)
     
-    // MARK: - Headline Fonts (Section headers, titles)
-    static let appHeadline1 = Font.system(size: 24, weight: .semibold, design: .default)
-    static let appHeadline2 = Font.system(size: 20, weight: .semibold, design: .default)
-    static let appHeadline3 = Font.system(size: 18, weight: .semibold, design: .default)
+    // MARK: - Headline Fonts (Section headers, titles) - Using Rounded
+    static let appHeadline1 = Font.system(size: 26, weight: .bold, design: .rounded)
+    static let appHeadline2 = Font.system(size: 22, weight: .semibold, design: .rounded)
+    static let appHeadline3 = Font.system(size: 20, weight: .semibold, design: .rounded)
     
-    // MARK: - Title Fonts (Page titles, card titles)
-    static let appTitle1 = Font.system(size: 22, weight: .regular, design: .default)
-    static let appTitle2 = Font.system(size: 20, weight: .medium, design: .default)
-    static let appTitle3 = Font.system(size: 18, weight: .medium, design: .default)
+    // MARK: - Title Fonts (Page titles, card titles) - Using Rounded
+    static let appTitle1 = Font.system(size: 24, weight: .medium, design: .rounded)
+    static let appTitle2 = Font.system(size: 22, weight: .medium, design: .rounded)
+    static let appTitle3 = Font.system(size: 20, weight: .medium, design: .rounded)
     
-    // MARK: - Body Fonts (Main content)
-    static let appBodyLarge = Font.system(size: 17, weight: .regular, design: .default)
-    static let appBody = Font.system(size: 15, weight: .regular, design: .default)
-    static let appBodySmall = Font.system(size: 13, weight: .regular, design: .default)
+    // MARK: - Body Fonts (Main content) - Using default SF Pro for readability
+    static let appBodyLarge = Font.system(size: 18, weight: .regular, design: .default)
+    static let appBody = Font.system(size: 16, weight: .regular, design: .default)
+    static let appBodySmall = Font.system(size: 14, weight: .regular, design: .default)
     
-    // MARK: - Label Fonts (Buttons, tags, captions)
-    static let appLabel = Font.system(size: 15, weight: .medium, design: .default)
-    static let appLabelSmall = Font.system(size: 13, weight: .medium, design: .default)
-    static let appCaption = Font.system(size: 12, weight: .regular, design: .default)
+    // MARK: - Label Fonts (Buttons, tags, captions) - Using Rounded for consistency
+    static let appLabel = Font.system(size: 16, weight: .semibold, design: .rounded)
+    static let appLabelSmall = Font.system(size: 14, weight: .medium, design: .rounded)
+    static let appCaption = Font.system(size: 13, weight: .regular, design: .rounded)
     
-    // MARK: - Button Fonts
-    static let appButtonLarge = Font.system(size: 17, weight: .semibold, design: .default)
-    static let appButton = Font.system(size: 15, weight: .semibold, design: .default)
-    static let appButtonSmall = Font.system(size: 13, weight: .semibold, design: .default)
+    // MARK: - Button Fonts - Using Rounded for modern buttons
+    static let appButtonLarge = Font.system(size: 18, weight: .bold, design: .rounded)
+    static let appButton = Font.system(size: 16, weight: .semibold, design: .rounded)
+    static let appButtonSmall = Font.system(size: 14, weight: .semibold, design: .rounded)
 }
 
 /// Text style modifiers for consistent typography
