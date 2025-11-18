@@ -192,6 +192,14 @@ struct CalendarView: View {
                 Spacer()
             }
             .navigationTitle("Planning")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: WeatherView()) {
+                        Image(systemName: "cloud.sun.fill")
+                            .foregroundColor(.blue)
+                    }
+                }
+            }
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showAddPlan) {
                 AddPlanView(selectedDate: selectedDate, planningViewModel: planningViewModel)

@@ -12,12 +12,13 @@ OutfitEase is a SwiftUI iOS application backed by a Node.js/Express API. Users m
 ## Features
 
 - Email/password authentication with JWT sessions.
-- Wardrobe management (clothing items, outfits, AI-ready metadata).
-- Calendar planning for upcoming outfits.
-- Community feed with posts, likes, comments, user avatars.
+- Wardrobe management (clothing items with photos, details like brand, price, season, and occasion).
+- Outfit creation by combining clothing items with style tags and metadata.
+- Calendar planning for scheduling outfits on specific dates.
+- Community feed with posts, likes, and comments.
 - Public profile pages with follower/following counts and post history.
 - Follow/unfollow other users (with sample relationships seeded).
-- Cloudinary-backed image uploads for outfits and profiles.
+- Cloudinary-backed image uploads for clothing items and outfits.
 
 ## Architecture Overview
 
@@ -110,7 +111,7 @@ Sample credentials (if seeds were run):
 | kitty@gmail.com   | password1234 | Has posts and followers |
 | sarah@example.com | password123  | Community sample user |
 
-Use the profile tab to see followers/following, edit avatar, or sign out.
+Use the profile tab to view your stats (clothes, outfits, posts, followers, following), manage your content, or sign out.
 
 ## Testing
 

@@ -1,6 +1,6 @@
 # OutfitEase Backend
 
-A Node.js/Express backend API for the OutfitEase fashion application, providing comprehensive endpoints for user management, clothing items, outfits, community features, and AI-powered outfit generation.
+A Node.js/Express backend API for the OutfitEase fashion application, providing comprehensive endpoints for user management, clothing items, outfits, community features, and weather integration.
 
 ## Features
 
@@ -27,12 +27,6 @@ A Node.js/Express backend API for the OutfitEase fashion application, providing 
 - Like and unlike posts
 - Comment system
 - User interaction tracking
-
-### AI-Powered Features
-- Outfit generation based on filters
-- Weather-based recommendations
-- Event-specific suggestions
-- Budget-aware recommendations
 
 ### Weather Integration
 - Real-time weather data
@@ -61,7 +55,6 @@ backend/
 │   ├── clothesController.js
 │   ├── commentsController.js
 │   ├── likesController.js
-│   ├── outfitGenerationController.js
 │   ├── outfitPlanningController.js
 │   ├── outfitsController.js
 │   ├── postController.js
@@ -84,7 +77,6 @@ backend/
 │   ├── clothes.js
 │   ├── comments.js
 │   ├── likes.js
-│   ├── outfitGeneration.js
 │   ├── outfitPlanning.js
 │   ├── outfits.js
 │   ├── posts.js
@@ -210,11 +202,6 @@ chmod +x quick-start.sh
 - `GET /planning/:date` - Get plans for specific date
 - `PUT /planning/:id` - Update outfit plan
 - `DELETE /planning/:id` - Delete outfit plan
-
-### Outfit Generation
-- `POST /outfit-generation/generate` - Generate outfits with filters
-- `POST /outfit-generation/weather-based` - Weather-based generation
-- `GET /outfit-generation/event/:eventType` - Event-specific suggestions
 
 ### Weather
 - `GET /weather/current` - Get current weather

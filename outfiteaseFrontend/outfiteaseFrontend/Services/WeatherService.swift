@@ -1,12 +1,17 @@
 import Foundation
 import CoreLocation
 
-class WeatherService {
+class WeatherService: NSObject, CLLocationManagerDelegate {
     static let shared = WeatherService()
     private let apiService = APIService.shared
     private let locationManager = CLLocationManager()
+    private var locationContinuation: CheckedContinuation<CLLocation, Error>?
     
-    private init() {}
+    override private init() {
+        super.init()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+    }
     
     func getCurrentWeather(latitude: Double? = nil, longitude: Double? = nil, city: String? = nil) async throws -> WeatherInfo {
         var queryItems: [String] = []
@@ -19,7 +24,8 @@ class WeatherService {
         }
         
         let queryString = queryItems.isEmpty ? "" : "?" + queryItems.joined(separator: "&")
-        return try await apiService.request(endpoint: "/weather/current\(queryString)")
+        let response: WeatherResponse = try await apiService.request(endpoint: "/weather/current\(queryString)")
+        return response.weather
     }
     
     func getWeatherForecast(latitude: Double? = nil, longitude: Double? = nil, city: String? = nil) async throws -> [WeatherForecast] {
@@ -33,7 +39,8 @@ class WeatherService {
         }
         
         let queryString = queryItems.isEmpty ? "" : "?" + queryItems.joined(separator: "&")
-        return try await apiService.request(endpoint: "/weather/forecast\(queryString)")
+        let response: WeatherForecastResponse = try await apiService.request(endpoint: "/weather/forecast\(queryString)")
+        return response.forecast
     }
     
     func getWeatherRecommendations(temperature: Double, conditions: String, humidity: Int) async throws -> WeatherRecommendations {
@@ -44,37 +51,64 @@ class WeatherService {
         )
         
         let body = try JSONEncoder().encode(weatherData)
-        return try await apiService.request(
+        let response: WeatherRecommendationResponse = try await apiService.request(
             endpoint: "/weather/recommendations",
             method: .POST,
             body: body
         )
+        return response.recommendations
     }
     
     func requestLocationPermission() async -> Bool {
-        return await withCheckedContinuation { continuation in
+        let status = locationManager.authorizationStatus
+        
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
+            return true
+        case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                let status = CLLocationManager.authorizationStatus()
-                continuation.resume(returning: status == .authorizedWhenInUse || status == .authorizedAlways)
+            return await withCheckedContinuation { continuation in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    let newStatus = self.locationManager.authorizationStatus
+                    continuation.resume(returning: newStatus == .authorizedWhenInUse || newStatus == .authorizedAlways)
+                }
             }
+        default:
+            return false
         }
     }
     
     func getCurrentLocation() async throws -> CLLocation {
+        let status = locationManager.authorizationStatus
+        guard status == .authorizedWhenInUse || status == .authorizedAlways else {
+            throw WeatherError.locationDenied
+        }
+        
         return try await withCheckedThrowingContinuation { continuation in
+            self.locationContinuation = continuation
             locationManager.requestLocation()
             
-            // Set up a timer to handle timeout
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-                continuation.resume(throwing: WeatherError.locationTimeout)
+            // Timeout after 15 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 15) {
+                if let cont = self.locationContinuation {
+                    self.locationContinuation = nil
+                    cont.resume(throwing: WeatherError.locationTimeout)
+                }
             }
-            
-            // This would need to be implemented with proper delegate methods
-            // For now, we'll return a mock location
-            continuation.resume(returning: CLLocation(latitude: 40.7128, longitude: -74.0060)) // NYC
         }
+    }
+    
+    // MARK: - CLLocationManagerDelegate
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.first, let continuation = locationContinuation else { return }
+        locationContinuation = nil
+        continuation.resume(returning: location)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        guard let continuation = locationContinuation else { return }
+        locationContinuation = nil
+        continuation.resume(throwing: error)
     }
 }
 
@@ -110,6 +144,21 @@ struct WeatherRecommendationRequest: Codable {
     let temperature: Double
     let conditions: String
     let humidity: Int
+}
+
+struct WeatherResponse: Codable {
+    let success: Bool
+    let weather: WeatherInfo
+}
+
+struct WeatherForecastResponse: Codable {
+    let success: Bool
+    let forecast: [WeatherForecast]
+}
+
+struct WeatherRecommendationResponse: Codable {
+    let success: Bool
+    let recommendations: WeatherRecommendations
 }
 
 enum WeatherError: Error {
