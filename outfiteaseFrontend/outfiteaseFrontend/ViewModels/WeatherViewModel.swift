@@ -2,6 +2,9 @@ import Foundation
 import SwiftUI
 import CoreLocation
 
+// Import APIError from APIService
+// Note: APIError is defined in APIService.swift
+
 @MainActor
 class WeatherViewModel: ObservableObject {
     @Published var currentWeather: WeatherInfo?
@@ -39,7 +42,21 @@ class WeatherViewModel: ObservableObject {
                 errorMessage = "Location permission denied. Please enable location access in Settings."
             }
         } catch {
-            errorMessage = error.localizedDescription
+            // Try to extract more detailed error message
+            if let apiError = error as? APIError {
+                switch apiError {
+                case .httpError(let statusCode):
+                    if statusCode == 500 {
+                        errorMessage = "Server error: Weather API key may not be configured. Please contact support or check server logs."
+                    } else {
+                        errorMessage = "HTTP error \(statusCode): \(error.localizedDescription)"
+                    }
+                default:
+                    errorMessage = error.localizedDescription
+                }
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
         
         isLoading = false
@@ -53,7 +70,21 @@ class WeatherViewModel: ObservableObject {
             currentWeather = try await weatherService.getCurrentWeather(city: city)
             weatherForecast = try await weatherService.getWeatherForecast(city: city)
         } catch {
-            errorMessage = error.localizedDescription
+            // Try to extract more detailed error message
+            if let apiError = error as? APIError {
+                switch apiError {
+                case .httpError(let statusCode):
+                    if statusCode == 500 {
+                        errorMessage = "Server error: Weather API key may not be configured. Please contact support or check server logs."
+                    } else {
+                        errorMessage = "HTTP error \(statusCode): \(error.localizedDescription)"
+                    }
+                default:
+                    errorMessage = error.localizedDescription
+                }
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
         
         isLoading = false

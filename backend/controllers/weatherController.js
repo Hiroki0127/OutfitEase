@@ -6,8 +6,17 @@ const weatherController = {
         try {
             const { latitude, longitude, city } = req.query;
             
-            // Use OpenWeatherMap API (you'll need to add your API key)
-            const apiKey = process.env.OPENWEATHER_API_KEY || 'your_api_key_here';
+            // Check if API key is set
+            const apiKey = process.env.OPENWEATHER_API_KEY;
+            if (!apiKey || apiKey === 'your_api_key_here') {
+                console.error('❌ OPENWEATHER_API_KEY is not set or is invalid');
+                return res.status(500).json({
+                    success: false,
+                    message: 'Weather API key is not configured. Please set OPENWEATHER_API_KEY in environment variables.',
+                    error: 'Missing API key'
+                });
+            }
+            
             let url;
             
             if (latitude && longitude) {
@@ -21,6 +30,7 @@ const weatherController = {
                 });
             }
 
+            console.log('🌤️ Fetching weather from OpenWeather API...');
             const response = await axios.get(url);
             const weatherData = response.data;
 
@@ -31,20 +41,64 @@ const weatherController = {
                 humidity: weatherData.main.humidity,
                 conditions: weatherData.weather[0].main.toLowerCase(),
                 description: weatherData.weather[0].description,
-                windSpeed: weatherData.wind.speed,
+                windSpeed: weatherData.wind?.speed || 0,
                 city: weatherData.name,
                 country: weatherData.sys.country
             };
 
+            console.log('✅ Weather data fetched successfully for:', weatherInfo.city);
             res.json({
                 success: true,
                 weather: weatherInfo
             });
         } catch (error) {
-            console.error('Error fetching weather:', error);
+            console.error('❌ Error fetching weather:', error.message);
+            console.error('Error details:', {
+                response: error.response?.data,
+                status: error.response?.status,
+                statusText: error.response?.statusText,
+                code: error.code,
+                fullError: error
+            });
+            
+            // Provide more specific error messages
+            if (error.response) {
+                const status = error.response.status;
+                const data = error.response.data;
+                
+                if (status === 401) {
+                    return res.status(500).json({
+                        success: false,
+                        message: 'Invalid OpenWeather API key. Please check your OPENWEATHER_API_KEY environment variable. API keys may take 10-15 minutes to activate after creation.',
+                        error: 'Invalid API key',
+                        details: data?.message || 'Unauthorized'
+                    });
+                } else if (status === 404) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'City or location not found. Please check the city name or coordinates.',
+                        error: 'Location not found'
+                    });
+                } else {
+                    return res.status(500).json({
+                        success: false,
+                        message: `Weather API error: ${data?.message || error.message}`,
+                        error: error.message,
+                        statusCode: status,
+                        details: data
+                    });
+                }
+            }
+            
+            // Network or other errors
             res.status(500).json({
                 success: false,
-                message: 'Error fetching weather data'
+                message: `Error fetching weather data: ${error.message}`,
+                error: error.message,
+                code: error.code || 'UNKNOWN_ERROR',
+                hint: error.code === 'ECONNREFUSED' ? 'Could not connect to OpenWeather API. Check your internet connection.' : 
+                      error.code === 'ETIMEDOUT' ? 'Request timed out. OpenWeather API may be slow.' :
+                      'Check Render logs for more details.'
             });
         }
     },
@@ -54,7 +108,16 @@ const weatherController = {
         try {
             const { latitude, longitude, city } = req.query;
             
-            const apiKey = process.env.OPENWEATHER_API_KEY || 'your_api_key_here';
+            const apiKey = process.env.OPENWEATHER_API_KEY;
+            if (!apiKey || apiKey === 'your_api_key_here') {
+                console.error('❌ OPENWEATHER_API_KEY is not set or is invalid');
+                return res.status(500).json({
+                    success: false,
+                    message: 'Weather API key is not configured. Please set OPENWEATHER_API_KEY in environment variables.',
+                    error: 'Missing API key'
+                });
+            }
+            
             let url;
             
             if (latitude && longitude) {
@@ -68,21 +131,42 @@ const weatherController = {
                 });
             }
 
+            console.log('🌤️ Fetching weather forecast from OpenWeather API...');
             const response = await axios.get(url);
             const forecastData = response.data;
 
             // Process forecast data to get daily forecasts
             const dailyForecasts = processForecastData(forecastData);
 
+            console.log('✅ Weather forecast fetched successfully');
             res.json({
                 success: true,
                 forecast: dailyForecasts
             });
         } catch (error) {
-            console.error('Error fetching weather forecast:', error);
+            console.error('❌ Error fetching weather forecast:', error.message);
+            console.error('Error details:', {
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            
+            if (error.response) {
+                const status = error.response.status;
+                const data = error.response.data;
+                
+                if (status === 401) {
+                    return res.status(500).json({
+                        success: false,
+                        message: 'Invalid OpenWeather API key. Please check your OPENWEATHER_API_KEY environment variable.',
+                        error: 'Invalid API key'
+                    });
+                }
+            }
+            
             res.status(500).json({
                 success: false,
-                message: 'Error fetching weather forecast'
+                message: 'Error fetching weather forecast',
+                error: error.message
             });
         }
     },

@@ -19,6 +19,10 @@ struct WeatherView: View {
                             .padding()
                     } else if let error = weatherViewModel.errorMessage {
                         ErrorView(message: error)
+                            .onTapGesture {
+                                // Clear error and try again
+                                weatherViewModel.errorMessage = nil
+                            }
                     } else {
                         EmptyWeatherView()
                     }
