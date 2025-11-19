@@ -16,7 +16,6 @@
 		45C6ABA82E49259100600F17 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 45C6ABA72E49259100600F17 /* FirebaseFirestore */; };
 		45C6ABAA2E49259100600F17 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 45C6ABA92E49259100600F17 /* FirebaseStorage */; };
 		45C6ABAC2E4941DB00600F17 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45C6ABAB2E4941DB00600F17 /* GoogleService-Info.plist */; };
-		45C6ABAD2E4941DB00600F18 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45C6ABAE2E4941DB00600F18 /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,7 +40,6 @@
 		4519E59E2E3AE3D500809882 /* outfiteaseFrontendTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = outfiteaseFrontendTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4519E5A82E3AE3D500809882 /* outfiteaseFrontendUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = outfiteaseFrontendUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		45C6ABAB2E4941DB00600F17 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		45C6ABAE2E4941DB00600F18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -103,7 +101,6 @@
 				4519E5AB2E3AE3D500809882 /* outfiteaseFrontendUITests */,
 				4519E5922E3AE3D300809882 /* Products */,
 				45C6ABAB2E4941DB00600F17 /* GoogleService-Info.plist */,
-				45C6ABAE2E4941DB00600F18 /* Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -250,7 +247,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				45C6ABAC2E4941DB00600F17 /* GoogleService-Info.plist in Resources */,
-				45C6ABAD2E4941DB00600F18 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
