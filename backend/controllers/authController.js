@@ -1,6 +1,7 @@
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 
 const registerUser = async (req, res) => {
   const { email, username, password, role = 'user' } = req.body;
@@ -274,4 +275,116 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, updateProfile };
+const googleSignIn = async (req, res) => {
+  const { idToken } = req.body;
+
+  console.log('🔐 Google Sign In request received');
+
+  if (!idToken) {
+    return res.status(400).json({ message: 'Google ID token is required' });
+  }
+
+  try {
+    // Initialize Google OAuth client
+    // For iOS, we need to use the iOS client ID from Firebase
+    // The client ID should be set in environment variables
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    
+    if (!clientId) {
+      console.error('❌ GOOGLE_CLIENT_ID is not set in environment variables');
+      return res.status(500).json({ 
+        message: 'Server configuration error',
+        error: 'Google Client ID not configured'
+      });
+    }
+
+    const client = new OAuth2Client(clientId);
+
+    // Verify the ID token
+    const ticket = await client.verifyIdToken({
+      idToken: idToken,
+      audience: clientId,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture, sub: googleId } = payload;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email not provided by Google' });
+    }
+
+    console.log('✅ Google token verified for:', email);
+
+    // Check if user exists
+    let userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+
+    let user;
+    if (userResult.rows.length === 0) {
+      // Create new user
+      console.log('📝 Creating new user from Google Sign In');
+      const username = name || email.split('@')[0];
+      
+      const insertResult = await pool.query(
+        `INSERT INTO users (email, username, password_hash, avatar_url, role) 
+         VALUES ($1, $2, $3, $4, $5) 
+         RETURNING id, email, username, avatar_url, created_at, role`,
+        [email, username, '', picture || null, 'user']
+      );
+      
+      user = insertResult.rows[0];
+      console.log('✅ New user created:', user.id);
+    } else {
+      // User exists, update avatar if provided and not set
+      user = userResult.rows[0];
+      
+      if (picture && !user.avatar_url) {
+        await pool.query(
+          'UPDATE users SET avatar_url = $1 WHERE id = $2',
+          [picture, user.id]
+        );
+        user.avatar_url = picture;
+      }
+      
+      console.log('✅ Existing user found:', user.id);
+    }
+
+    // Create JWT token
+    if (!process.env.JWT_SECRET) {
+      console.error('❌ JWT_SECRET is not set!');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role || 'user' },
+      process.env.JWT_SECRET,
+      { expiresIn: '60d' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        avatar_url: user.avatar_url,
+        created_at: user.created_at,
+        role: user.role
+      },
+      message: 'Google Sign In successful'
+    });
+  } catch (error) {
+    console.error('Google Sign In Error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+
+    res.status(500).json({
+      message: 'Google Sign In failed',
+      error: error.message
+    });
+  }
+};
+
+module.exports = { registerUser, loginUser, updateProfile, googleSignIn };
