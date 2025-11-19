@@ -174,7 +174,7 @@ struct ProfileView: View {
                     Spacer(minLength: 50)
                 }
             }
-            .navigationTitle("Profile")
+            .navigationTitleFont("Profile")
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showSettings) {
                 SettingsView()
@@ -328,6 +328,12 @@ struct PublicProfileView: View {
             }
         }
         .navigationTitle(viewModel.profile?.user.username ?? "Profile")
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text(viewModel.profile?.user.username ?? "Profile")
+                    .font(.appHeadline2)
+            }
+        }
         .navigationBarTitleDisplayMode(.inline)
         .task {
             guard !hasLoaded else { return }

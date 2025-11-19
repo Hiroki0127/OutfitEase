@@ -125,7 +125,7 @@ struct OutfitListView: View {
                     }
                 }
             }
-            .navigationTitle("Outfits")
+            .navigationTitleFont("Outfits")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

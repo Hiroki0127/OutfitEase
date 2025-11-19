@@ -67,7 +67,7 @@ struct ClothingListView: View {
                     }
                 }
             }
-            .navigationTitle("My Clothes")
+            .navigationTitleFont("My Clothes")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $searchText, prompt: "Search clothes...")
             .toolbar {

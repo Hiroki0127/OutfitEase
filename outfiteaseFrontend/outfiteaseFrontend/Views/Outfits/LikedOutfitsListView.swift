@@ -135,7 +135,7 @@ struct LikedOutfitsListView: View {
                     }
                 }
             }
-            .navigationTitle("Saved Outfits")
+            .navigationTitleFont("Saved Outfits")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $searchText, prompt: "Search saved outfits...")
             .toolbar {

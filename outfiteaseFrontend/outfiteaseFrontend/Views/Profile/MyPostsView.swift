@@ -38,7 +38,7 @@ struct MyPostsView: View {
                 }
             }
         }
-        .navigationTitle("My Posts")
+        .navigationTitleFont("My Posts")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {

@@ -34,7 +34,7 @@ struct LikedContentView: View {
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             }
-            .navigationTitle("Liked Content")
+            .navigationTitleFont("Liked Content")
             .navigationBarTitleDisplayMode(.large)
         }
     }

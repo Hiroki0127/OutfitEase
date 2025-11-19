@@ -46,7 +46,7 @@ struct PostFeedView: View {
                     }
                 }
             }
-            .navigationTitle("Community")
+            .navigationTitleFont("Community")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showCreatePost = true }) {

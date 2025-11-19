@@ -39,7 +39,7 @@ struct WeatherView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Weather")
+            .navigationTitleFont("Weather")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
@@ -345,7 +345,7 @@ struct CityInputView: View {
                         .font(.appCaption)
                 }
             }
-            .navigationTitle("Search City")
+            .navigationTitleFont("Search City")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {

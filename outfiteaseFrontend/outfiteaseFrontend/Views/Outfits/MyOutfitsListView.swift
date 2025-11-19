@@ -70,7 +70,7 @@ struct MyOutfitsListView: View {
                     }
                 }
             }
-            .navigationTitle("My Outfits")
+            .navigationTitleFont("My Outfits")
             .navigationBarTitleDisplayMode(.large)
             .navigationBarBackButtonHidden(false)
             .searchable(text: $searchText, prompt: "Search outfits...")

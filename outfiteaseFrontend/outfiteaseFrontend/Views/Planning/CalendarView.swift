@@ -191,7 +191,7 @@ struct CalendarView: View {
                 
                 Spacer()
             }
-            .navigationTitle("Planning")
+            .navigationTitleFont("Planning")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: WeatherView()) {
