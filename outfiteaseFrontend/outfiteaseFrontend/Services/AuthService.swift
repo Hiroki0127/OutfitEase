@@ -90,6 +90,26 @@ class AuthService {
         
         return response.user
     }
+    
+    func googleSignIn(idToken: String) async throws -> AuthResponse {
+        let googleSignInRequest = GoogleSignInRequest(idToken: idToken)
+        let body = try JSONEncoder().encode(googleSignInRequest)
+        
+        return try await apiService.request(
+            endpoint: Constants.API.auth + "/google",
+            method: .POST,
+            body: body,
+            requiresAuth: false
+        )
+    }
+}
+
+struct GoogleSignInRequest: Codable {
+    let idToken: String
+    
+    enum CodingKeys: String, CodingKey {
+        case idToken = "idToken"
+    }
 }
 
 struct PublicProfileResponse: Codable {

@@ -130,32 +130,60 @@ class AuthViewModel: ObservableObject {
         print("🏁 Mock login function finished")
     }
     func handleGoogleSignIn() {
-        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+        // Check if Google Sign In is configured
+        guard GIDSignIn.sharedInstance.configuration != nil else {
+            errorMessage = "Google Sign In not configured. Please enable Google Sign In in Firebase Console → Authentication → Sign-in method → Google"
+            print("❌ Google Sign In configuration is nil")
+            print("   Firebase client ID: \(FirebaseApp.app()?.options.clientID ?? "nil")")
+            return
+        }
         
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootViewController = windowScene.windows.first?.rootViewController else {
+            errorMessage = "Unable to present Google Sign In"
             return
         }
 
-        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
-            if let error = error {
-                print("Google sign-in error:", error.localizedDescription)
-                return
-            }
+        isLoading = true
+        errorMessage = nil
 
-            guard let user = result?.user,
-                  let idToken = user.idToken?.tokenString else { return }
-
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                           accessToken: user.accessToken.tokenString)
-
-            Auth.auth().signIn(with: credential) { result, error in
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { [weak self] result, error in
+            guard let self = self else { return }
+            
+            Task { @MainActor in
                 if let error = error {
-                    print("Firebase sign-in error:", error.localizedDescription)
+                    self.isLoading = false
+                    self.errorMessage = "Google sign-in error: \(error.localizedDescription)"
+                    print("❌ Google sign-in error:", error.localizedDescription)
                     return
                 }
 
-                print("✅ User signed in successfully:", result?.user.uid ?? "")
+                guard let user = result?.user,
+                      let idToken = user.idToken?.tokenString else {
+                    self.isLoading = false
+                    self.errorMessage = "Failed to get Google ID token"
+                    print("❌ Failed to get Google ID token")
+                    return
+                }
+
+                print("✅ Google ID token received, sending to backend...")
+                
+                do {
+                    // Send ID token to backend
+                    let response = try await self.authService.googleSignIn(idToken: idToken)
+                    
+                    // Save auth data
+                    self.authService.saveAuthData(response)
+                    self.currentUser = response.user
+                    self.isLoggedIn = true
+                    self.isLoading = false
+                    
+                    print("✅ Google Sign In successful:", response.user.email)
+                } catch {
+                    self.isLoading = false
+                    self.errorMessage = "Failed to sign in with Google: \(error.localizedDescription)"
+                    print("❌ Backend Google Sign In error:", error.localizedDescription)
+                }
             }
         }
     }
