@@ -63,6 +63,9 @@ struct outfiteaseFrontendApp: App {
                 // Comment out reset for real backend testing
                 // authViewModel.resetForTesting()
             }
+            .onOpenURL { url in
+                GIDSignIn.sharedInstance.handle(url)
+            }
         }
     }
 }
