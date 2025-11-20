@@ -4,6 +4,7 @@ struct CreatePostView: View {
     @ObservedObject var postViewModel: PostViewModel
     @Environment(\.dismiss) private var dismiss
     
+    @MainActor
     init(postViewModel: PostViewModel = PostViewModel()) {
         self.postViewModel = postViewModel
     }
