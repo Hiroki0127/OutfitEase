@@ -55,7 +55,7 @@ struct PostFeedView: View {
                 }
             }
             .sheet(isPresented: $showCreatePost) {
-                CreatePostView()
+                CreatePostView(postViewModel: postViewModel)
             }
             .sheet(item: $selectedUser) { selection in
                 NavigationView {

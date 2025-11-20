@@ -62,13 +62,7 @@ struct FeedView: View {
                 await postViewModel.loadPosts()
             }
             .sheet(isPresented: $showCreatePost) {
-                CreatePostView()
-                    .onDisappear {
-                        // Refresh posts when the create post view is dismissed
-                        Task {
-                            await postViewModel.loadPosts()
-                        }
-                    }
+                CreatePostView(postViewModel: postViewModel)
             }
         }
         .task {

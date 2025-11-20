@@ -1,8 +1,12 @@
 import SwiftUI
 
 struct CreatePostView: View {
-    @StateObject private var postViewModel = PostViewModel()
+    @ObservedObject var postViewModel: PostViewModel
     @Environment(\.dismiss) private var dismiss
+    
+    init(postViewModel: PostViewModel = PostViewModel()) {
+        self.postViewModel = postViewModel
+    }
     
     @State private var caption = ""
     @State private var selectedOutfit: Outfit?
@@ -95,6 +99,8 @@ struct CreatePostView: View {
         Task {
             await postViewModel.createPost(request)
             if postViewModel.errorMessage == nil {
+                // Reload posts to ensure the new post appears
+                await postViewModel.loadPosts()
                 dismiss()
             }
         }

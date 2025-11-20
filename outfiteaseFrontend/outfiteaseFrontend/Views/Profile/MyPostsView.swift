@@ -49,7 +49,13 @@ struct MyPostsView: View {
             }
         }
         .sheet(isPresented: $showCreatePost) {
-            CreatePostView()
+            CreatePostView(postViewModel: postViewModel)
+                .onDisappear {
+                    // Refresh user posts when the create post view is dismissed
+                    Task {
+                        await postViewModel.loadUserPosts()
+                    }
+                }
         }
         .task {
             await postViewModel.loadUserPosts()
