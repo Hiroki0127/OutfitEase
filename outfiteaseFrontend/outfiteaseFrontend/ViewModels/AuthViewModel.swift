@@ -153,6 +153,22 @@ class AuthViewModel: ObservableObject {
             Task { @MainActor in
                 if let error = error {
                     self.isLoading = false
+                    
+                    // Check if user cancelled - don't show error for cancellation
+                    let errorDescription = error.localizedDescription.lowercased()
+                    let nsError = error as NSError
+                    
+                    // Check for cancellation (multiple ways Google Sign-In might indicate cancellation)
+                    if errorDescription.contains("cancel") || 
+                       errorDescription.contains("cancelled") ||
+                       (nsError.domain == "com.google.GIDSignIn" && nsError.code == -5) {
+                        // User cancelled - silently handle it
+                        print("ℹ️ User cancelled Google Sign-In")
+                        self.errorMessage = nil
+                        return
+                    }
+                    
+                    // For other errors, show error message
                     self.errorMessage = "Google sign-in error: \(error.localizedDescription)"
                     print("❌ Google sign-in error:", error.localizedDescription)
                     return
