@@ -122,8 +122,17 @@ class APIService {
                 print("📄 Response body: \(responseText)")
                 
                 // Try to decode error response
-                if let errorData = try? JSONDecoder().decode(ErrorResponse.self, from: finalData) {
-                    errorMessage = errorData.message
+                do {
+                    let errorData = try JSONDecoder().decode(ErrorResponse.self, from: finalData)
+                    errorMessage = errorData.message ?? errorData.error
+                    print("✅ Parsed error message: \(errorMessage ?? "nil")")
+                } catch {
+                    print("⚠️ Failed to parse error response: \(error)")
+                    // Fallback: parse as dictionary
+                    if let json = try? JSONSerialization.jsonObject(with: finalData) as? [String: Any] {
+                        errorMessage = json["message"] as? String ?? json["error"] as? String
+                        print("✅ Extracted error message from dictionary: \(errorMessage ?? "nil")")
+                    }
                 }
             }
             
@@ -162,7 +171,10 @@ enum APIError: Error, LocalizedError {
             return "Invalid response"
         case .httpError(let statusCode, let message):
             // Return backend message if available, otherwise generic error
-            return message ?? "HTTP error: \(statusCode)"
+            if let msg = message {
+                return msg
+            }
+            return "HTTP error: \(statusCode)"
         case .decodingError(let error):
             return "Decoding error: \(error.localizedDescription)"
         }

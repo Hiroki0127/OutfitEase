@@ -61,11 +61,13 @@ class AuthViewModel: ObservableObject {
                 case .httpError(let statusCode, let message):
                     // Show user-friendly message based on status code and backend message
                     if statusCode == 400 {
-                        // Check if it's invalid credentials
+                        // Check if it's invalid credentials - show "Wrong password" for login errors
                         if let msg = message, msg.lowercased().contains("invalid credentials") || msg.lowercased().contains("invalid") {
-                            errorMessage = "Incorrect email or password"
+                            errorMessage = "Wrong password"
+                        } else if let msg = message, !msg.isEmpty {
+                            errorMessage = msg
                         } else {
-                            errorMessage = message ?? "Invalid email or password"
+                            errorMessage = "Wrong password"
                         }
                     } else {
                         errorMessage = message ?? "Login failed. Please try again."
@@ -74,9 +76,15 @@ class AuthViewModel: ObservableObject {
                     errorMessage = apiError.localizedDescription
                 }
             } else {
-                errorMessage = error.localizedDescription
+                // Fallback: check error description for common patterns
+                let errorDesc = error.localizedDescription
+                if errorDesc.contains("Invalid credentials") || errorDesc.lowercased().contains("invalid") || errorDesc.contains("400") {
+                    errorMessage = "Wrong password"
+                } else {
+                    errorMessage = errorDesc
+                }
             }
-            print("❌ Login failed: \(error.localizedDescription)")
+            print("❌ Login failed: \(errorMessage ?? "Unknown error")")
         }
         
         isLoading = false
