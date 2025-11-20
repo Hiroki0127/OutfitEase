@@ -11,7 +11,7 @@ OutfitEase is a SwiftUI iOS application backed by a Node.js/Express API. Users m
 
 ## Features
 
-- Email/password authentication with JWT sessions.
+- Email/password and Google Sign-In authentication with JWT sessions.
 - Wardrobe management (clothing items with photos, details like brand, price, season, and occasion).
 - Outfit creation by combining clothing items with style tags and metadata.
 - Calendar planning for scheduling outfits on specific dates.
@@ -59,6 +59,7 @@ CLOUDINARY_CLOUD_NAME=...
 CLOUDINARY_API_KEY=...
 CLOUDINARY_API_SECRET=...
 OPENWEATHER_API_KEY=...
+GOOGLE_CLIENT_ID=... (iOS client ID from Firebase Console)
 PORT=10000
 NODE_ENV=production
 ```
@@ -94,7 +95,7 @@ npm run dev
 1. Create a Render Web Service pointing to this repo.
 2. Build command: `cd backend && npm install`
 3. Start command: `cd backend && npm start`
-4. Set the environment variables listed above.
+4. Set the environment variables listed above (including `GOOGLE_CLIENT_ID` from Firebase Console → Authentication → Sign-in method → Google).
 5. Deploy. Render may take 50–60 seconds to wake on the free tier; the iOS client uses longer timeouts and a warm-up ping to handle this.
 
 ### 4. Configure the iOS app
