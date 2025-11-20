@@ -115,10 +115,19 @@ class APIService {
         guard httpResponse.statusCode >= 200 && httpResponse.statusCode < 300 else {
             print("❌ HTTP Error: \(httpResponse.statusCode)")
             print("📄 Response headers: \(httpResponse.allHeaderFields)")
+            
+            // Try to parse error message from response body
+            var errorMessage: String?
             if let responseText = String(data: finalData, encoding: .utf8) {
                 print("📄 Response body: \(responseText)")
+                
+                // Try to decode error response
+                if let errorData = try? JSONDecoder().decode(ErrorResponse.self, from: finalData) {
+                    errorMessage = errorData.message
+                }
             }
-            throw APIError.httpError(statusCode: httpResponse.statusCode)
+            
+            throw APIError.httpError(statusCode: httpResponse.statusCode, message: errorMessage)
         }
         
         do {
@@ -142,7 +151,7 @@ enum HTTPMethod: String {
 enum APIError: Error, LocalizedError {
     case invalidURL
     case invalidResponse
-    case httpError(statusCode: Int)
+    case httpError(statusCode: Int, message: String?)
     case decodingError(Error)
     
     var errorDescription: String? {
@@ -151,10 +160,16 @@ enum APIError: Error, LocalizedError {
             return "Invalid URL"
         case .invalidResponse:
             return "Invalid response"
-        case .httpError(let statusCode):
-            return "HTTP error: \(statusCode)"
+        case .httpError(let statusCode, let message):
+            // Return backend message if available, otherwise generic error
+            return message ?? "HTTP error: \(statusCode)"
         case .decodingError(let error):
             return "Decoding error: \(error.localizedDescription)"
         }
     }
+}
+
+struct ErrorResponse: Codable {
+    let message: String?
+    let error: String?
 }

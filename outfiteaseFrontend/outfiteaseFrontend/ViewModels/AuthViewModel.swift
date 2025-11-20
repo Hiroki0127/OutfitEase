@@ -55,7 +55,27 @@ class AuthViewModel: ObservableObject {
             isLoggedIn = true
             print("✅ Login successful")
         } catch {
-            errorMessage = error.localizedDescription
+            // Parse error and show user-friendly message
+            if let apiError = error as? APIError {
+                switch apiError {
+                case .httpError(let statusCode, let message):
+                    // Show user-friendly message based on status code and backend message
+                    if statusCode == 400 {
+                        // Check if it's invalid credentials
+                        if let msg = message, msg.lowercased().contains("invalid credentials") || msg.lowercased().contains("invalid") {
+                            errorMessage = "Incorrect email or password"
+                        } else {
+                            errorMessage = message ?? "Invalid email or password"
+                        }
+                    } else {
+                        errorMessage = message ?? "Login failed. Please try again."
+                    }
+                default:
+                    errorMessage = apiError.localizedDescription
+                }
+            } else {
+                errorMessage = error.localizedDescription
+            }
             print("❌ Login failed: \(error.localizedDescription)")
         }
         
