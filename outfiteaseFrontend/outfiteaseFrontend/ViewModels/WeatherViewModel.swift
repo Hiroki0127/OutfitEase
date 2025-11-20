@@ -45,11 +45,11 @@ class WeatherViewModel: ObservableObject {
             // Try to extract more detailed error message
             if let apiError = error as? APIError {
                 switch apiError {
-                case .httpError(let statusCode):
+                case .httpError(let statusCode, let message):
                     if statusCode == 500 {
-                        errorMessage = "Server error: Weather API key may not be configured. Please contact support or check server logs."
+                        errorMessage = message ?? "Server error: Weather API key may not be configured. Please contact support or check server logs."
                     } else {
-                        errorMessage = "HTTP error \(statusCode): \(error.localizedDescription)"
+                        errorMessage = message ?? "HTTP error \(statusCode): \(error.localizedDescription)"
                     }
                 default:
                     errorMessage = error.localizedDescription
@@ -73,11 +73,11 @@ class WeatherViewModel: ObservableObject {
             // Try to extract more detailed error message
             if let apiError = error as? APIError {
                 switch apiError {
-                case .httpError(let statusCode):
+                case .httpError(let statusCode, let message):
                     if statusCode == 500 {
-                        errorMessage = "Server error: Weather API key may not be configured. Please contact support or check server logs."
+                        errorMessage = message ?? "Server error: Weather API key may not be configured. Please contact support or check server logs."
                     } else {
-                        errorMessage = "HTTP error \(statusCode): \(error.localizedDescription)"
+                        errorMessage = message ?? "HTTP error \(statusCode): \(error.localizedDescription)"
                     }
                 default:
                     errorMessage = error.localizedDescription
