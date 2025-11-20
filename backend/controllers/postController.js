@@ -122,10 +122,10 @@ exports.getPostById = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
   const { id } = req.params;
-  const { caption, image_url, description } = req.body;
+  const { caption } = req.body;
 
   try {
-    const updatedPost = await postModel.updatePost(id, caption, image_url, description );
+    const updatedPost = await postModel.updatePost(id, caption);
     if (!updatedPost) return res.status(404).json({ error: 'Post not found' });
     res.json(updatedPost);
   } catch (err) {

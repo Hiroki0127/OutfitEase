@@ -1,12 +1,12 @@
 const db = require('../db');
 
 // Define the createPost function
-async function createPost(userId, outfitId, caption, description, image_url) {
+async function createPost(userId, outfitId, caption) {
   const result = await db.query(
-    `INSERT INTO posts (user_id, outfit_id, caption, image_url)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO posts (user_id, outfit_id, caption)
+     VALUES ($1, $2, $3)
      RETURNING *`,
-    [userId, outfitId, caption, image_url]
+    [userId, outfitId, caption]
   );
   return result.rows[0];
 }
@@ -166,15 +166,13 @@ async function getPostById(id, userId = null) {
 };
 
 
-async function updatePost(id, caption, image_url, description) {
+async function updatePost(id, caption) {
   const result = await db.query(
     `UPDATE posts
-     SET caption = $1,
-         image_url = $2,
-         description = $3
-     WHERE id = $4
+     SET caption = $1
+     WHERE id = $2
      RETURNING *`,
-    [caption, image_url, description, id]
+    [caption, id]
   );
 
   return result.rows[0];
