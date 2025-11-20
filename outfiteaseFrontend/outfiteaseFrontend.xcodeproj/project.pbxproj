@@ -42,9 +42,22 @@
 		45C6ABAB2E4941DB00600F17 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		457131672ECEA5D4008B5FC0 /* Exceptions for "outfiteaseFrontend" folder in "outfiteaseFrontend" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4519E5902E3AE3D300809882 /* outfiteaseFrontend */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4519E5932E3AE3D300809882 /* outfiteaseFrontend */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				457131672ECEA5D4008B5FC0 /* Exceptions for "outfiteaseFrontend" folder in "outfiteaseFrontend" target */,
+			);
 			path = outfiteaseFrontend;
 			sourceTree = "<group>";
 		};
@@ -434,7 +447,7 @@
 				DEVELOPMENT_TEAM = 3MRPYB6897;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_MERGE_FILE = outfiteaseFrontend/Info.plist.merge;
+				INFOPLIST_FILE = outfiteaseFrontend/Info.plist;
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = YES;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "OutfitEase needs your location to provide weather-based outfit recommendations.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -442,6 +455,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_MERGE_FILE = outfiteaseFrontend/Info.plist.merge;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -467,7 +481,7 @@
 				DEVELOPMENT_TEAM = 3MRPYB6897;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_MERGE_FILE = outfiteaseFrontend/Info.plist.merge;
+				INFOPLIST_FILE = outfiteaseFrontend/Info.plist;
 				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = YES;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "OutfitEase needs your location to provide weather-based outfit recommendations.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -475,6 +489,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_MERGE_FILE = outfiteaseFrontend/Info.plist.merge;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

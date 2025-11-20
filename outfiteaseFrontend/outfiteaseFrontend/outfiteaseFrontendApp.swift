@@ -11,6 +11,9 @@ import GoogleSignIn
 
 @main
 struct outfiteaseFrontendApp: App {
+    // Connect AppDelegate for Google Sign-In URL handling
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     @StateObject private var authViewModel = AuthViewModel()
     
     init() {
@@ -63,10 +66,25 @@ struct outfiteaseFrontendApp: App {
                 // Comment out reset for real backend testing
                 // authViewModel.resetForTesting()
             }
-            .onOpenURL { url in
-                GIDSignIn.sharedInstance.handle(url)
-            }
         }
+    }
+}
+
+// AppDelegate to handle URL callback for Google Sign-In
+class AppDelegate: NSObject, UIApplicationDelegate {
+    
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Optional: configure Google Sign-In if needed
+        // GIDSignIn.sharedInstance.restorePreviousSignIn() // if you want auto sign-in
+        return true
+    }
+    
+    func application(_ app: UIApplication,
+                     open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        // Handle the URL callback so Google Sign-In can detect the URL scheme
+        return GIDSignIn.sharedInstance.handle(url)
     }
 }
 
