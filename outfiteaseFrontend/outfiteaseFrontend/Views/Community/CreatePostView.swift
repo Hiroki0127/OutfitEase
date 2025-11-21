@@ -4,9 +4,14 @@ struct CreatePostView: View {
     @ObservedObject var postViewModel: PostViewModel
     @Environment(\.dismiss) private var dismiss
     
-    @MainActor
-    init(postViewModel: PostViewModel = PostViewModel()) {
+    init(postViewModel: PostViewModel) {
         self.postViewModel = postViewModel
+    }
+    
+    // Convenience initializer for cases where a new view model is needed
+    @MainActor
+    init() {
+        self.postViewModel = PostViewModel()
     }
     
     @State private var caption = ""
